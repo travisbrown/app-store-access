@@ -1,0 +1,45 @@
+[workspace]
+resolver = "2"
+members = ["core", "google", "apple"]
+
+[workspace.package]
+authors = ["Travis Brown <travisrobertbrown@gmail.com>"]
+homepage = "https://github.com/travisbrown/app-store-access"
+repository = "https://github.com/travisbrown/app-store-access"
+keywords = ["google", "apple", "scraper"]
+edition = "2024"
+license = "GPL-3.0-only"
+version = "0.1.0"
+
+[workspace.dependencies]
+
+bounded-static = "0.8"
+bounded-static-derive-more = "0.1"
+chrono = { version = "0.4", features = ["serde"] }
+cli-helpers = "0.1"
+csv = "1"
+ecmade = "0.1"
+http = "1"
+indexmap = { version = "2", features = ["serde"] }
+log = "0.4"
+num-rational = { version = "0.4", features = ["serde"] }
+num-traits = "0.2"
+plist = "1"
+regex = "1"
+reqwest = { version = "0.12", features = ["cookies", "json"] }
+rusqlite = "0.37"
+scraper = "0.24"
+scraper-trail = { git = "https://github.com/travisbrown/scraper-trail.git", branch = "v0.1.x" }
+serde = { version = "1", features = ["derive"] }
+serde-query = "0.2"
+serde-field-attributes = "0.1"
+serde_json = { version = "1", features = ["preserve_order"] }
+swc_atoms = "7"
+swc_common = "14"
+swc_ecma_ast = "15"
+swc_ecma_parser = "24"
+thiserror = "2"
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+url = "2"
+urlencoding = "2"
+uuid = { version = "1", features = ["serde"] }

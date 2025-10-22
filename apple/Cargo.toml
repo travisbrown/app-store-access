@@ -1,0 +1,30 @@
+[package]
+name = "app-store-access-apple"
+authors = { workspace = true }
+repository = { workspace = true }
+version = { workspace = true }
+edition = { workspace = true }
+license = { workspace = true }
+
+[dependencies]
+app-store-access = { path = "../core/" }
+bounded-static = { workspace = true }
+bounded-static-derive-more = { workspace = true }
+chrono = { workspace = true }
+cli-helpers = { workspace = true }
+csv = { workspace = true }
+http = { workspace = true }
+indexmap = { workspace = true }
+num-rational = { workspace = true }
+num-traits = { workspace = true }
+plist = { workspace = true }
+reqwest = { workspace = true }
+regex = { workspace = true }
+scraper-trail = { workspace = true }
+serde = { workspace = true }
+serde-field-attributes = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+url = { workspace = true }
+urlencoding = { workspace = true }

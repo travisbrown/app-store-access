@@ -1,0 +1,17 @@
+[package]
+name = "app-store-access"
+authors = { workspace = true }
+repository = { workspace = true }
+version = { workspace = true }
+edition = { workspace = true }
+license = { workspace = true }
+
+[dependencies]
+indexmap = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+swc_atoms = { workspace = true }
+swc_common = { workspace = true }
+swc_ecma_ast = { workspace = true }
+swc_ecma_parser = { workspace = true }
+thiserror = { workspace = true }
