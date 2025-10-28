@@ -189,6 +189,7 @@ impl<'de> serde::de::Deserialize<'de> for Genre {
                     &"a genre ID",
                 )),
                 Some(genre) => {
+                    #[cfg(feature = "strict")]
                     // TODO: fix the handling of "Sports" (which is ambigous) here.
                     if internal.name.parse::<Self>() != Ok(genre)
                         && internal.name != "Sports"
@@ -211,6 +212,9 @@ impl<'de> serde::de::Deserialize<'de> for Genre {
                             ))
                         }
                     }
+
+                    #[cfg(not(feature = "strict"))]
+                    Ok(genre)
                 }
             }
         } else {
@@ -237,117 +241,269 @@ impl serde::ser::Serialize for Genre {
 
 const GENRE_INFO: [(Genre, u16, &[&str]); 60] = [
     (Genre::All, 0, &["All"]),
-    (Genre::Business, 6000, &["Business", "Wirtschaft"]),
-    (Genre::Weather, 6001, &["Weather", "Wetter", "Погода"]),
+    (
+        Genre::Business,
+        6000,
+        &[
+            "Business",
+            "Wirtschaft",
+            "Économie et entreprise",
+            "Economía y empresa",
+        ],
+    ),
+    (
+        Genre::Weather,
+        6001,
+        &["Weather", "Wetter", "Météo", "Погода"],
+    ),
     (
         Genre::Utilities,
         6002,
-        &["Utilities", "Утилиты", "Dienst\u{ad}programme"],
+        &[
+            "Utilities",
+            "Dienst\u{ad}programme",
+            "Utilitaires",
+            "Utilidades",
+            "Утилиты",
+        ],
     ),
-    (Genre::Travel, 6003, &["Travel", "Reisen"]),
-    (Genre::Sports, 6004, &["Sports", "Sport"]),
+    (
+        Genre::Travel,
+        6003,
+        &["Travel", "Reisen", "Voyages", "Viajes"],
+    ),
+    (Genre::Sports, 6004, &["Sports", "Sport", "Deportes"]),
     (
         Genre::SocialNetworking,
         6005,
-        &["Social Networking", "Soziale Netze", "Социальные сети"],
+        &[
+            "Social Networking",
+            "Soziale Netze",
+            "Réseaux sociaux",
+            "Redes sociales",
+            "Социальные сети",
+        ],
     ),
     (
         Genre::Reference,
         6006,
-        &["Reference", "Nachschlagewerke", "Справочники"],
+        &["Reference", "Nachschlagewerke", "Referencia", "Справочники"],
     ),
     (
         Genre::Productivity,
         6007,
-        &["Productivity", "Produktivität", "Производительность"],
+        &[
+            "Productivity",
+            "Produktivität",
+            "Productivité",
+            "Productividad",
+            "Производительность",
+        ],
     ),
     (
         Genre::PhotoAndVideo,
         6008,
-        &["Photo & Video", "Foto und Video", "Фото и видео"],
+        &[
+            "Photo & Video",
+            "Foto und Video",
+            "Photo et vidéo",
+            "Foto y vídeo",
+            "Фото и видео",
+        ],
     ),
-    (Genre::News, 6009, &["News", "Nachrichten"]),
+    (Genre::News, 6009, &["News", "Nachrichten", "Actualités"]),
     (Genre::Navigation, 6010, &["Navigation"]),
     (Genre::Music, 6011, &["Music", "Musik"]),
-    (Genre::Lifestyle, 6012, &["Lifestyle", "Образ жизни"]),
+    (
+        Genre::Lifestyle,
+        6012,
+        &["Lifestyle", "Style de vie", "Estilo de vida", "Образ жизни"],
+    ),
     (
         Genre::HealthAndFitness,
         6013,
-        &["Health & Fitness", "Gesundheit und Fitness"],
+        &[
+            "Health & Fitness",
+            "Gesundheit und Fitness",
+            "Forme et santé",
+            "Salud y forma física",
+        ],
     ),
-    (Genre::Games, 6014, &["Games", "Spiele", "Игры"]),
-    (Genre::Finance, 6015, &["Finance", "Finanzen"]),
+    (
+        Genre::Games,
+        6014,
+        &["Games", "Spiele", "Jeux", "Juegos", "Игры"],
+    ),
+    (Genre::Finance, 6015, &["Finance", "Finanzen", "Finanzas"]),
     (
         Genre::Entertainment,
         6016,
-        &["Entertainment", "Unterhaltung", "Развлечения"],
+        &[
+            "Entertainment",
+            "Unterhaltung",
+            "Divertissement",
+            "Entretenimiento",
+            "Развлечения",
+        ],
     ),
-    (Genre::Education, 6017, &["Education", "Bildung"]),
+    (
+        Genre::Education,
+        6017,
+        &["Education", "Bildung", "Éducation", "Educación"],
+    ),
     // "Book" seen at least once.
-    (Genre::Books, 6018, &["Books", "Book"]),
-    (Genre::Medical, 6020, &["Medical", "Medizin"]),
+    (
+        Genre::Books,
+        6018,
+        &["Books", "Book", "Bücher", "Livres", "Libros"],
+    ),
+    (
+        Genre::Medical,
+        6020,
+        &["Medical", "Medizin", "Médecine", "Medicina"],
+    ),
     (
         Genre::MagazinesAndNewspapers,
         6021,
-        &["Magazines & Newspapers", "Газеты и журналы"],
+        &[
+            "Magazines & Newspapers",
+            "Zeitungen und Zeitschriften",
+            "Journaux et magazines",
+            "Revistas y periódicos",
+            "Газеты и журналы",
+        ],
     ),
     (Genre::Catalogs, 6022, &["Catalogs"]),
     (
         Genre::FoodAndDrink,
         6023,
-        &["Food & Drink", "Essen und Trinken"],
+        &[
+            "Food & Drink",
+            "Essen und Trinken",
+            "Cuisine et boissons",
+            "Comida y bebida",
+        ],
     ),
-    (Genre::Shopping, 6024, &["Shopping"]),
-    (Genre::Stickers, 6025, &["Stickers"]),
+    (Genre::Shopping, 6024, &["Shopping", "Compras"]),
+    (Genre::Stickers, 6025, &["Stickers", "Sticker"]),
     (
         Genre::DeveloperTools,
         6026,
-        &["Developer Tools", "Разработчикам"],
+        &[
+            "Developer Tools",
+            "Entwickler-Tools",
+            "Outils de développement",
+            "Para desarrolladores",
+            "Разработчикам",
+        ],
     ),
     (
         Genre::GraphicsAndDesign,
         6027,
-        &["Graphics & Design", "Grafik und Design", "Графика и дизайн"],
+        &[
+            "Graphics & Design",
+            "Grafik und Design",
+            "Graphisme et design",
+            "Diseño gráfico",
+            "Графика и дизайн",
+        ],
     ),
-    (Genre::GamesAction, 7001, &["Action"]),
-    (Genre::GamesAdventure, 7002, &["Adventure", "Приключения"]),
-    (Genre::GamesCasual, 7003, &["Casual"]),
-    (Genre::GamesBoard, 7004, &["Board", "Brettspiele"]),
-    (Genre::GamesCard, 7005, &["Card"]),
+    (Genre::GamesAction, 7001, &["Action", "Acción"]),
+    (
+        Genre::GamesAdventure,
+        7002,
+        &[
+            "Adventure",
+            "Abenteuer",
+            "Aventure",
+            "Aventura",
+            "Приключения",
+        ],
+    ),
+    (
+        Genre::GamesCasual,
+        7003,
+        &["Casual", "Parties rapides", "Recreativos"],
+    ),
+    (
+        Genre::GamesBoard,
+        7004,
+        &["Board", "Brettspiele", "Jeux de société", "Juegos de mesa"],
+    ),
+    (
+        Genre::GamesCard,
+        7005,
+        &["Card", "Karten", "Cartes", "Cartas"],
+    ),
     (Genre::GamesCasino, 7006, &["Casino"]),
     (Genre::GamesDice, 7007, &["Dice"]),
-    (Genre::GamesFamily, 7009, &["Family"]),
+    (
+        Genre::GamesFamily,
+        7009,
+        &["Family", "Familie", "Famille", "Familiar"],
+    ),
     (Genre::GamesMusic, 7011, &["Music"]),
-    (Genre::GamesPuzzle, 7012, &["Puzzle"]),
-    (Genre::GamesRacing, 7013, &["Racing"]),
+    (Genre::GamesPuzzle, 7012, &["Puzzle", "Casse-tête", "Puzle"]),
+    (
+        Genre::GamesRacing,
+        7013,
+        &["Racing", "Rennsport", "Course", "Carreras"],
+    ),
     (
         Genre::GamesRolePlaying,
         7014,
         // German-language responses include both "Role-Playing" and "Rollenspiel".
-        &["Role Playing", "Roleplaying", "Role-Playing", "Rollenspiel"],
+        &[
+            "Role Playing",
+            "Roleplaying",
+            "Role-Playing",
+            "Rollenspiel",
+            "Jeux de rôle",
+            "Juegos de rol",
+        ],
     ),
-    (Genre::GamesSimulation, 7015, &["Simulation", "Симуляторы"]),
-    (Genre::GamesSports, 7016, &["Sports"]),
-    (Genre::GamesStrategy, 7017, &["Strategy", "Strategie"]),
-    (Genre::GamesTrivia, 7018, &["Trivia"]),
-    (Genre::GamesWord, 7019, &["Word"]),
+    (
+        Genre::GamesSimulation,
+        7015,
+        &["Simulation", "Simulación", "Симуляторы"],
+    ),
+    (Genre::GamesSports, 7016, &["Sports", "Deportes"]),
+    (
+        Genre::GamesStrategy,
+        7017,
+        &["Strategy", "Strategie", "Stratégie", "Estrategia"],
+    ),
+    (
+        Genre::GamesTrivia,
+        7018,
+        &["Trivia", "Quiz- und Denkspiele", "Quiz"],
+    ),
+    (
+        Genre::GamesWord,
+        7019,
+        &["Word", "Wortspiele", "Mots", "Palabras"],
+    ),
     (
         Genre::StickersEmojiAndExpressions,
         16001,
-        &["Emoji & Expressions"],
+        &["Emoji & Expressions", "Emojis und Emotionen"],
     ),
     (
         Genre::StickersAnimalsAndNature,
         16003,
-        &["Animals & Nature"],
+        &["Animals & Nature", "Tiere und Natur"],
     ),
     (Genre::StickersArt, 16005, &["Art"]),
-    (Genre::StickersCelebrations, 16006, &["Celebrations"]),
-    (Genre::StickersCelebrities, 16007, &["Celebrities"]),
+    (
+        Genre::StickersCelebrations,
+        16006,
+        &["Celebrations", "Feierlichkeiten"],
+    ),
+    (Genre::StickersCelebrities, 16007, &["Celebrities", "Stars"]),
     (
         Genre::StickersComicsAndCartoons,
         16008,
-        &["Comics & Cartoons"],
+        &["Comics & Cartoons", "Comics und Cartoons"],
     ),
     (
         Genre::StickersEatingAndDrinking,
@@ -357,7 +513,7 @@ const GENRE_INFO: [(Genre, u16, &[&str]); 60] = [
     (Genre::StickersGaming, 16010, &["Gaming"]),
     (Genre::StickersMoviesAndTv, 16014, &["Movies & TV"]),
     (Genre::StickersMusic, 16015, &["Music"]),
-    (Genre::StickersPeople, 16017, &["People"]),
+    (Genre::StickersPeople, 16017, &["People", "Leute"]),
     (
         Genre::StickersPlacesAndObjects,
         16019,
@@ -366,7 +522,7 @@ const GENRE_INFO: [(Genre, u16, &[&str]); 60] = [
     (
         Genre::StickersSportsAndActivities,
         16021,
-        &["Sports & Activities"],
+        &["Sports & Activities", "Sport und Aktivitäten"],
     ),
     (Genre::StickersKidsAndFamily, 16025, &["Kids & Family"]),
     (Genre::StickersFashion, 16026, &["Fashion"]),

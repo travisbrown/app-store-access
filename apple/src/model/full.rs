@@ -235,7 +235,9 @@ impl PageData<'_> {
     }
 
     #[must_use]
-    pub fn rating_and_advisories(&self) -> Option<Vec<super::ContentRatingAdvisory>> {
+    pub fn rating_and_advisories(
+        &self,
+    ) -> Option<Vec<super::content_rating::ContentRatingAdvisory>> {
         match self {
             Self::SoftwarePage(software_page) => {
                 software_page.rating_and_advisories.advisories.clone()
@@ -333,7 +335,7 @@ pub struct TopAppsList<'a> {
 #[derive(Clone, Debug, Eq, PartialEq, ToStatic, serde::Deserialize, serde::Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct RatingAndAdvisories<'a> {
-    pub advisories: Option<Vec<super::ContentRatingAdvisory>>,
+    pub advisories: Option<Vec<super::content_rating::ContentRatingAdvisory>>,
     #[serde(rename = "rating-text")]
     pub rating_text: Cow<'a, str>,
 }

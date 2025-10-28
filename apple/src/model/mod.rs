@@ -8,11 +8,14 @@ use serde_field_attributes::{integer_str, optional_ratio_u64, ratio_u64};
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 
+pub mod content_rating;
 pub mod devices;
 pub mod full;
 pub mod genre;
 pub mod lookup;
 pub mod reviews;
+#[cfg(not(feature = "strict"))]
+pub mod strict_fix;
 pub mod suggest;
 pub mod version;
 
@@ -25,9 +28,48 @@ pub enum PageType {
 #[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
 #[serde(deny_unknown_fields, rename_all = "UPPERCASE")]
 pub enum Currency {
+    Aed,
+    Aud,
+    Bgn,
+    Brl,
+    Cad,
+    Chf,
+    Clp,
+    Cny,
+    Cop,
+    Czk,
+    Dkk,
+    Egp,
     Eur,
+    Gbp,
+    Hkd,
+    Huf,
+    Idr,
+    Jpy,
+    Krw,
+    Kzt,
+    Mxn,
+    Myr,
+    Ngn,
+    Nok,
+    Nzd,
+    Pen,
+    Pkr,
+    Php,
+    Pln,
+    Qar,
+    Ron,
     Rub,
+    Sar,
+    Sek,
+    Sgd,
+    Thb,
+    Try,
+    Twd,
+    Tzs,
     Usd,
+    Vnd,
+    Zar,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
@@ -67,147 +109,6 @@ pub enum Feature {
 pub enum ArtistType {
     #[serde(rename = "Software Artist")]
     SoftwareArtist,
-}
-
-#[derive(Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
-#[serde(deny_unknown_fields)]
-pub struct ContentRating {
-    pub name: ContentRatingName,
-    pub rank: u32,
-    pub value: u32,
-    pub system: Option<ContentRatingSystem>,
-    pub advisories: Option<Vec<ContentRatingAdvisory>>,
-}
-
-#[derive(Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
-#[serde(deny_unknown_fields)]
-pub struct ContentRatingsBySystem {
-    #[serde(rename = "appsApple")]
-    pub apps_apple: ContentRating,
-}
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
-#[serde(deny_unknown_fields)]
-#[serde(rename_all = "UPPERCASE")]
-pub enum ContentRatingSystem {
-    Games,
-}
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
-#[serde(deny_unknown_fields)]
-pub enum ContentRatingName {
-    #[serde(rename = "4+")]
-    FourPlus,
-    #[serde(rename = "9+")]
-    NinePlus,
-    #[serde(rename = "12+")]
-    TwelvePlus,
-    #[serde(rename = "17+")]
-    SeventeenPlus,
-}
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
-#[serde(deny_unknown_fields)]
-pub enum ContentRatingAdvisory {
-    #[serde(
-        rename = "Frequent/Intense Alcohol, Tobacco, or Drug Use or References",
-        alias = "Häufig/stark ausgeprägt: Gebrauch von Alkohol, Tabak oder Drogen bzw. Verweise hierzu"
-    )]
-    FrequentIntenseAlcoholTobaccoOrDrugUseOrReferences,
-    #[serde(rename = "Frequent/Intense Cartoon or Fantasy Violence")]
-    FrequentIntenseCartoonOrFantasyViolence,
-    #[serde(rename = "Frequent/Intense Contests")]
-    FrequentIntenseContests,
-    #[serde(rename = "Frequent/Intense Horror/Fear Themes")]
-    FrequentIntenseHorrorFearThemes,
-    #[serde(
-        rename = "Frequent/Intense Mature/Suggestive Themes",
-        alias = "Häufig/stark ausgeprägt: Szenen mit erotischen Anspielungen",
-        alias = "Большое/значительное количество тем откровенного содержания, предназначенные только для взрослых"
-    )]
-    FrequentIntenseMatureSuggestiveThemes,
-    #[serde(rename = "Frequent/Intense Medical/Treatment Information")]
-    FrequentIntenseMedicalTreatmentInformation,
-    #[serde(
-        rename = "Frequent/Intense Profanity or Crude Humor",
-        alias = "Frequent/Intense Profanity or Crude Humour",
-        alias = "Häufig/stark ausgeprägt: obszöner oder vulgärer Humor"
-    )]
-    FrequentIntenseProfanityOrCrudeHumor,
-    #[serde(rename = "Frequent/Intense Realistic Violence")]
-    FrequentIntenseRealisticViolence,
-    #[serde(
-        rename = "Frequent/Intense Sexual Content or Nudity",
-        alias = "Häufig/stark ausgeprägt: sexuelle Inhalte oder Nacktheit",
-        alias = "Большое/значительное количество контента сексуального или эротического характера"
-    )]
-    FrequentIntenseSexualContentOrNudity,
-    #[serde(
-        rename = "Frequent/Intense Simulated Gambling",
-        alias = "Häufig/stark ausgeprägt: simuliertes Glücksspiel"
-    )]
-    FrequentIntenseSimulatedGambling,
-    #[serde(
-        rename = "Infrequent/Mild Alcohol, Tobacco, or Drug Use or References",
-        alias = "Selten/schwach ausgeprägt: Gebrauch von Alkohol, Tabak oder Drogen bzw. Verweise hierzu"
-    )]
-    InfrequentMildAlcoholTobaccoOrDrugUseOrReferences,
-    #[serde(
-        rename = "Infrequent/Mild Cartoon or Fantasy Violence",
-        alias = "Selten/schwach ausgeprägt: Zeichentrick- oder Fantasy-Gewalt",
-        alias = "Малое/умеренное количество мультипликационного или фэнтезийного насилия"
-    )]
-    InfrequentMildCartoonOrFantasyViolence,
-    #[serde(rename = "Infrequent/Mild Contests")]
-    InfrequentMildContests,
-    #[serde(
-        rename = "Infrequent/Mild Horror/Fear Themes",
-        alias = "Selten/schwach ausgeprägt: Horror-/Gruselszenen",
-        alias = "Малое/умеренное количество тем, вызывающих ужас или страх"
-    )]
-    InfrequentMildHorrorFearThemes,
-    #[serde(
-        rename = "Infrequent/Mild Mature/Suggestive Themes",
-        alias = "Selten/schwach ausgeprägt: Szenen mit erotischen Anspielungen",
-        alias = "Малое/умеренное количество тем, предназначенных только для взрослых"
-    )]
-    InfrequentMildMatureSuggestiveThemes,
-    #[serde(
-        rename = "Infrequent/Mild Medical/Treatment Information",
-        alias = "Selten/schwach ausgeprägt: medizinische/Behandlungs-Informationen",
-        alias = "Малое/умеренное количество медицинской или лечебной тематики"
-    )]
-    InfrequentMildMedicalTreatmentInformation,
-    #[serde(
-        rename = "Infrequent/Mild Profanity or Crude Humor",
-        alias = "Infrequent/Mild Profanity or Crude Humour",
-        alias = "Selten/schwach ausgeprägt: obszöner oder vulgärer Humor",
-        alias = "Малое/умеренное количество сквернословия или грубого юмора"
-    )]
-    InfrequentMildProfanityOrCrudeHumor,
-    #[serde(
-        rename = "Infrequent/Mild Realistic Violence",
-        alias = "Selten/schwach ausgeprägt: realistisch dargestellte Gewalt",
-        alias = "Малое/умеренное количество реалистичного насилия"
-    )]
-    InfrequentMildRealisticViolence,
-    #[serde(
-        rename = "Infrequent/Mild Sexual Content and Nudity",
-        alias = "Selten/schwach ausgeprägt: sexuelle Inhalte oder Nacktheit",
-        alias = "Малое/умеренное количество контента сексуального или эротического характера"
-    )]
-    InfrequentMildSexualContentAndNudity,
-    #[serde(rename = "Infrequent/Mild Simulated Gambling")]
-    InfrequentMildSimulatedGambling,
-    Gambling,
-    #[serde(rename = "Loot Boxes")]
-    LootBoxes,
-    #[serde(
-        rename = "Unrestricted Web Access",
-        alias = "Unbeschränkter Zugang zum Web",
-        alias = "Неограниченный доступ к Сети"
-    )]
-    UnrestrictedWebAccess,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
@@ -319,14 +220,15 @@ pub struct AppCommon<'a> {
     #[serde(rename = "bundleId")]
     pub bundle_id: Option<Cow<'a, str>>,
     #[serde(rename = "contentRatingsBySystem")]
-    pub content_ratings_by_system: ContentRatingsBySystem,
+    pub content_ratings_by_system: content_rating::ContentRatingsBySystem,
     pub copyright: Option<Cow<'a, str>>,
     #[serde(rename = "deviceFamilies")]
     pub device_families: Vec<DeviceFamily>,
     #[serde(rename = "designedForDeviceFamilies")]
     pub designed_for_device_families: Option<Vec<DeviceFamily>>,
-    #[serde(rename = "genreNames", with = "genre::from_names")]
-    pub genre_names: Vec<genre::Genre>,
+    /// These should match the `name` values from the `genres` field.
+    #[serde(rename = "genreNames")]
+    pub genre_names: Vec<Cow<'a, str>>,
     pub genres: Vec<genre::Genre>,
     #[serde(rename = "hasInAppPurchases")]
     pub has_in_app_purchases: Option<bool>,
@@ -465,7 +367,7 @@ pub mod search {
         #[serde(rename = "circularIconArtwork")]
         pub circular_icon_artwork: Option<Vec<super::Image<'a>>>,
         #[serde(rename = "contentRating")]
-        pub content_rating: super::ContentRating,
+        pub content_rating: super::content_rating::ContentRating<super::content_rating::AppleName>,
         pub id: u64,
         #[serde(rename = "is32bitOnly")]
         pub is_32_bit_only: bool,
@@ -666,7 +568,7 @@ pub mod offer {
         pub expected_release_date: Option<NaiveDate>,
     }
 
-    #[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
     #[serde(deny_unknown_fields)]
     pub struct ActionText {
         pub downloaded: DownloadedText,
@@ -676,7 +578,9 @@ pub mod offer {
         pub short: ShortText,
     }
 
-    #[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
+    #[cfg_attr(feature = "strict", derive(Copy))]
+    #[serde(deny_unknown_fields)]
     pub enum DownloadedText {
         #[serde(
             rename = "INSTALLED",
@@ -687,9 +591,14 @@ pub mod offer {
         Installed,
         #[serde(rename = "DOWNLOADED")]
         Downloaded,
+        #[cfg(not(feature = "strict"))]
+        #[serde(untagged)]
+        Other(String),
     }
 
-    #[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
+    #[cfg_attr(feature = "strict", derive(Copy))]
+    #[serde(deny_unknown_fields)]
     pub enum DownloadingText {
         #[serde(
             rename = "INSTALLING",
@@ -700,9 +609,13 @@ pub mod offer {
         Installing,
         #[serde(rename = "DOWNLOADING")]
         Downloading,
+        #[cfg(not(feature = "strict"))]
+        #[serde(untagged)]
+        Other(String),
     }
 
-    #[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
+    #[cfg_attr(feature = "strict", derive(Copy))]
     #[serde(deny_unknown_fields)]
     pub enum OfferType {
         #[serde(rename = "buy")]
@@ -711,9 +624,13 @@ pub mod offer {
         Get,
         #[serde(rename = "preorder")]
         Preorder,
+        #[cfg(not(feature = "strict"))]
+        #[serde(untagged)]
+        Other(String),
     }
 
-    #[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
+    #[cfg_attr(feature = "strict", derive(Copy))]
     #[serde(deny_unknown_fields)]
     pub enum LongText {
         #[serde(
@@ -732,24 +649,35 @@ pub mod offer {
         GetApp,
         #[serde(rename = "GET BUNDLE")]
         GetBundle,
+        #[cfg(not(feature = "strict"))]
+        #[serde(untagged)]
+        Other(String),
     }
 
-    #[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
+    #[cfg_attr(feature = "strict", derive(Copy))]
     #[serde(deny_unknown_fields)]
     pub enum MediumText {
         #[serde(alias = "Kaufen", alias = "Купить")]
         Buy,
         #[serde(alias = "Laden", alias = "Загрузить")]
         Get,
+        #[cfg(not(feature = "strict"))]
+        #[serde(untagged)]
+        Other(String),
     }
 
-    #[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
+    #[cfg_attr(feature = "strict", derive(Copy))]
     #[serde(deny_unknown_fields)]
     pub enum ShortText {
         #[serde(rename = "BUY", alias = "Buy", alias = "KAUFEN", alias = "КУПИТЬ")]
         Buy,
         #[serde(rename = "GET", alias = "Get", alias = "LADEN", alias = "ЗАГРУЗИТЬ")]
         Get,
+        #[cfg(not(feature = "strict"))]
+        #[serde(untagged)]
+        Other(String),
     }
 
     #[derive(Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]

@@ -268,6 +268,69 @@ async fn main() -> Result<(), Error> {
                     }
                 }
                 StoreCommand::Search => {}
+
+                #[cfg(not(feature = "strict"))]
+                StoreCommand::FixStrict => {
+                    use app_store_access_apple::model::strict_fix::Fix;
+                    use bounded_static::ToBoundedStatic;
+
+                    let mut fixes = vec![];
+
+                    for (path, entry) in store.entries::<Data<'static>>(most_recent_first)? {
+                        let entry = entry.map_err(|error| {
+                            Error::from_scraper_store_error(path.clone(), error)
+                        })?;
+
+                        match entry.exchange.response.data {
+                            Data::App(app) => {
+                                fixes.extend(
+                                    app_store_access_apple::model::strict_fix::app_fixes(&app)
+                                        .iter()
+                                        .map(|fix| fix.to_static()),
+                                );
+                            }
+                            Data::Lookup(list) => {
+                                fixes.extend(
+                                    app_store_access_apple::model::strict_fix::lookup_fixes(&list)
+                                        .iter()
+                                        .map(|fix| fix.to_static()),
+                                );
+                            }
+                            _ => {}
+                        }
+                    }
+
+                    fixes.sort();
+                    fixes.dedup();
+
+                    for fix in fixes {
+                        match fix {
+                            Fix::UnknownContentRatingAdvisory(value) => {
+                                writer.write_record(["content_rating_advisory", &value, "", ""])?;
+                            }
+                            Fix::InvalidGenreName {
+                                name,
+                                found_id,
+                                expected_id,
+                            } => {
+                                writer.write_record([
+                                    "genre_name",
+                                    &name,
+                                    expected_id.to_string().as_str(),
+                                    found_id.to_string().as_str(),
+                                ])?;
+                            }
+                            Fix::UnknownGenreName { name, expected_id } => {
+                                writer.write_record([
+                                    "genre_name",
+                                    &name,
+                                    expected_id.to_string().as_str(),
+                                    "",
+                                ])?;
+                            }
+                        }
+                    }
+                }
             }
 
             writer.flush()?;
@@ -376,4 +439,6 @@ enum ApiCommand {
 enum StoreCommand {
     Apps,
     Search,
+    #[cfg(not(feature = "strict"))]
+    FixStrict,
 }

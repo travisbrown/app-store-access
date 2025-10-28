@@ -70,7 +70,7 @@ pub struct Software<'a> {
     pub is_game_center_enabled: Option<bool>,
     #[serde(rename = "supportedDevices")]
     pub supported_devices: Option<Vec<super::devices::Device>>,
-    pub advisories: Option<Vec<super::ContentRatingAdvisory>>,
+    pub advisories: Option<Vec<super::content_rating::ContentRatingAdvisory>>,
     pub features: Option<Vec<super::Feature>>,
     pub kind: super::EntityType,
     #[serde(rename = "languageCodesISO2A", with = "language_code_uppercase_array")]
@@ -80,13 +80,13 @@ pub struct Software<'a> {
     #[serde(rename = "formattedPrice")]
     pub formatted_price: Option<Cow<'a, str>>,
     #[serde(rename = "trackContentRating")]
-    pub track_content_rating: super::ContentRatingName,
+    pub track_content_rating: super::content_rating::AppleName,
     #[serde(rename = "trackCensoredName")]
     pub track_censored_name: Cow<'a, str>,
     #[serde(rename = "trackViewUrl")]
     pub track_view_url: Cow<'a, str>,
     #[serde(rename = "contentAdvisoryRating")]
-    pub content_advisory_rating: super::ContentRatingName,
+    pub content_advisory_rating: super::content_rating::AppleName,
     #[serde(rename = "artistId")]
     pub artist_id: u32,
     #[serde(rename = "artistName")]
@@ -116,12 +116,12 @@ pub struct Software<'a> {
     pub minimum_os_version: Cow<'a, str>,
     #[serde(rename = "primaryGenreId", with = "super::genre::from_id")]
     pub primary_genre: super::genre::Genre,
-    #[serde(rename = "primaryGenreName", with = "super::genre::from_name")]
-    pub primary_genre_name: super::genre::Genre,
+    #[serde(rename = "primaryGenreName")]
+    pub primary_genre_name: Cow<'a, str>,
     #[serde(rename = "genreIds", with = "super::genre::from_id_strs")]
     pub genres: Vec<super::genre::Genre>,
-    #[serde(rename = "genres", with = "super::genre::from_names")]
-    pub genres_from_name: Vec<super::genre::Genre>,
+    #[serde(rename = "genres")]
+    pub genres_from_name: Vec<Cow<'a, str>>,
     #[serde(with = "optional_ratio_u64", default)]
     pub price: Option<num_rational::Ratio<u64>>,
     #[serde(rename = "userRatingCount")]
