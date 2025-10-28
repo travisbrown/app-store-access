@@ -308,12 +308,17 @@ const GENRE_INFO: [(Genre, u16, &[&str]); 60] = [
             "Foto und Video",
             "Photo et vidéo",
             "Foto y vídeo",
+            "Fotografía y video",
             "Фото и видео",
         ],
     ),
-    (Genre::News, 6009, &["News", "Nachrichten", "Actualités"]),
+    (
+        Genre::News,
+        6009,
+        &["News", "Nachrichten", "Actualités", "Noticias"],
+    ),
     (Genre::Navigation, 6010, &["Navigation"]),
-    (Genre::Music, 6011, &["Music", "Musik"]),
+    (Genre::Music, 6011, &["Music", "Musik", "Música"]),
     (
         Genre::Lifestyle,
         6012,
@@ -327,6 +332,7 @@ const GENRE_INFO: [(Genre, u16, &[&str]); 60] = [
             "Gesundheit und Fitness",
             "Forme et santé",
             "Salud y forma física",
+            "Salud y fitness",
         ],
     ),
     (
@@ -423,12 +429,18 @@ const GENRE_INFO: [(Genre, u16, &[&str]); 60] = [
     (
         Genre::GamesCasual,
         7003,
-        &["Casual", "Parties rapides", "Recreativos"],
+        &["Casual", "Parties rapides", "Recreativos", "Casuales"],
     ),
     (
         Genre::GamesBoard,
         7004,
-        &["Board", "Brettspiele", "Jeux de société", "Juegos de mesa"],
+        &[
+            "Board",
+            "Brettspiele",
+            "Jeux de société",
+            "Juegos de mesa",
+            "De mesa",
+        ],
     ),
     (
         Genre::GamesCard,
@@ -440,10 +452,20 @@ const GENRE_INFO: [(Genre, u16, &[&str]); 60] = [
     (
         Genre::GamesFamily,
         7009,
-        &["Family", "Familie", "Famille", "Familiar"],
+        &[
+            "Family",
+            "Familie",
+            "Famille",
+            "Familiar",
+            "Para la familia",
+        ],
     ),
     (Genre::GamesMusic, 7011, &["Music"]),
-    (Genre::GamesPuzzle, 7012, &["Puzzle", "Casse-tête", "Puzle"]),
+    (
+        Genre::GamesPuzzle,
+        7012,
+        &["Puzzle", "Casse-tête", "Puzle", "De ingenio"],
+    ),
     (
         Genre::GamesRacing,
         7013,
@@ -460,6 +482,7 @@ const GENRE_INFO: [(Genre, u16, &[&str]); 60] = [
             "Rollenspiel",
             "Jeux de rôle",
             "Juegos de rol",
+            "Rol",
         ],
     ),
     (

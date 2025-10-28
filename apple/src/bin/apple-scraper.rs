@@ -315,17 +315,17 @@ async fn main() -> Result<(), Error> {
                             } => {
                                 writer.write_record([
                                     "genre_name",
-                                    &name,
                                     expected_id.to_string().as_str(),
                                     found_id.to_string().as_str(),
+                                    &name,
                                 ])?;
                             }
                             Fix::UnknownGenreName { name, expected_id } => {
                                 writer.write_record([
                                     "genre_name",
-                                    &name,
                                     expected_id.to_string().as_str(),
                                     "",
+                                    &name,
                                 ])?;
                             }
                         }

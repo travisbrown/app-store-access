@@ -45,6 +45,8 @@ pub enum Currency {
     Hkd,
     Huf,
     Idr,
+    Ils,
+    Inr,
     Jpy,
     Krw,
     Kzt,
