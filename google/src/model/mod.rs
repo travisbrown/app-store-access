@@ -3,6 +3,8 @@ pub mod developer;
 pub mod full;
 pub mod review;
 pub mod search;
+#[cfg(not(feature = "strict"))]
+pub mod strict_fix;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Price {

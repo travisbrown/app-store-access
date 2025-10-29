@@ -195,6 +195,44 @@ async fn main() -> Result<(), Error> {
                         }
                     }
                 }
+
+                #[cfg(not(feature = "strict"))]
+                StoreCommand::FixStrict => {
+                    use app_store_access_google::model::strict_fix::Fix;
+                    use bounded_static::ToBoundedStatic;
+
+                    let mut fixes = vec![];
+
+                    for (path, entry) in store.entries::<Data>(most_recent_first)? {
+                        let entry = entry.map_err(|error| {
+                            Error::from_scraper_store_error(path.clone(), error)
+                        })?;
+
+                        match entry.exchange.response.data {
+                            Data::Reviews(page) => {
+                                fixes.extend(
+                                    app_store_access_google::model::strict_fix::review_page_fixes(
+                                        &page,
+                                    )
+                                    .iter()
+                                    .map(|fix| fix.to_static()),
+                                );
+                            }
+                            _ => {}
+                        }
+                    }
+
+                    fixes.sort();
+                    fixes.dedup();
+
+                    for fix in fixes {
+                        match fix {
+                            Fix::UnknownReviewCriterionType(value) => {
+                                writer.write_record(["review_criterion_type", &value])?;
+                            }
+                        }
+                    }
+                }
             }
 
             writer.flush()?;
@@ -270,4 +308,6 @@ enum ApiCommand {
 enum StoreCommand {
     Apps,
     Search,
+    #[cfg(not(feature = "strict"))]
+    FixStrict,
 }

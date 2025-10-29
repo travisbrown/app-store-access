@@ -1,9 +1,21 @@
 #[derive(
-    Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd, serde::Deserialize, serde::Serialize,
+    Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd, serde::Deserialize, serde::Serialize,
 )]
+#[cfg_attr(feature = "strict", derive(Copy))]
+#[serde(deny_unknown_fields)]
 pub enum CriterionType {
+    #[serde(rename = "vaf_2nd_screen_experience")]
+    SecondScreenExperience,
+    #[serde(rename = "vaf_4k_content")]
+    FourKContent,
+    #[serde(rename = "vaf_4k_movies_shows")]
+    FourKMoviesShows,
+    #[serde(rename = "vaf_actor_bios")]
+    ActorBios,
     #[serde(rename = "vaf_age_targeting_6_8")]
     AgeTargeting68,
+    #[serde(rename = "vaf_android_tv")]
+    AndroidTv,
     #[serde(rename = "vaf_apps_attribute_anime_v1")]
     AppsAttributeAnimeV1,
     #[serde(rename = "vaf_apps_attribute_anime_v2")]
@@ -32,10 +44,16 @@ pub enum CriterionType {
     AppsCategoryRestaurantV1,
     #[serde(rename = "vaf_apps_category_restaurant_v2")]
     AppsCategoryRestaurantV2,
+    #[serde(rename = "vaf_auto_play")]
+    AutoPlay,
     #[serde(rename = "vaf_available_social_networks")]
     AvailableSocialNetworks,
     #[serde(rename = "vaf_backing_up_photos")]
     BackingUpPhotos,
+    #[serde(rename = "vaf_blur_feature")]
+    BlurFeature,
+    #[serde(rename = "vaf_buying_movies_shows")]
+    BuyingMoviesShows,
     #[serde(rename = "vaf_buying_tickets")]
     BuyingTickets,
     #[serde(rename = "vaf_camera")]
@@ -44,20 +62,36 @@ pub enum CriterionType {
     CancellationPolicy,
     #[serde(rename = "vaf_changing_reservations")]
     ChangingReservations,
+    #[serde(rename = "vaf_closed_captions")]
+    ClosedCaptions,
+    #[serde(rename = "vaf_creating_albums")]
+    CreatingAlbums,
+    #[serde(rename = "vaf_creating_gifs")]
+    CreatingGifs,
     #[serde(rename = "vaf_cropping_photos")]
     CroppingPhotos,
     #[serde(rename = "vaf_delete_messages")]
     DeleteMessages,
     #[serde(rename = "vaf_dictionary")]
     Dictionary,
+    #[serde(rename = "vaf_editing_photos")]
+    EditingPhotos,
     #[serde(rename = "vaf_editing_text")]
     EditingText,
     #[serde(rename = "vaf_emojis")]
     Emojis,
     #[serde(rename = "vaf_equalizer")]
     Equalizer,
+    #[serde(rename = "vaf_filmographies")]
+    Filmographies,
+    #[serde(rename = "vaf_filters")]
+    Filters,
+    #[serde(rename = "vaf_free_content")]
+    FreeContent,
     #[serde(rename = "vaf_free_storage")]
     FreeStorage,
+    #[serde(rename = "vaf_free_trial")]
+    FreeTrial,
     #[serde(rename = "vaf_games_addictive")]
     GamesAddictive,
     #[serde(rename = "vaf_games_beautiful")]
@@ -436,6 +470,12 @@ pub enum CriterionType {
     GamesSubjectZombie,
     #[serde(rename = "vaf_games_works_offline")]
     GamesWorksOffline,
+    #[serde(rename = "vaf_google_cast")]
+    GoogleCast,
+    #[serde(rename = "vaf_hd_content")]
+    HdContent,
+    #[serde(rename = "vaf_hd_movies_shows")]
+    HdMoviesShows,
     #[serde(rename = "vaf_international_transfers")]
     InternationalTransfers,
     #[serde(rename = "vaf_investing")]
@@ -444,10 +484,22 @@ pub enum CriterionType {
     LearningPiano,
     #[serde(rename = "vaf_making_collages")]
     MakingCollages,
+    #[serde(rename = "vaf_making_scrapbooks")]
+    MakingScrapbooks,
+    #[serde(rename = "vaf_making_videos")]
+    MakingVideos,
+    #[serde(rename = "vaf_making_watchlists")]
+    MakingWatchlists,
     #[serde(rename = "vaf_map_searches")]
     MapSearches,
     #[serde(rename = "vaf_mark_message_as_read")]
     MarkMessageAsRead,
+    #[serde(rename = "vaf_movie_show_info")]
+    MovieShowInfo,
+    #[serde(rename = "vaf_multi_device_sync")]
+    MultiDeviceSync,
+    #[serde(rename = "vaf_multiple_languages")]
+    MultipleLanguages,
     #[serde(rename = "vaf_never_display_ads_experience")]
     NeverDisplayAdsExperience,
     #[serde(rename = "vaf_never_display_app_description")]
@@ -486,6 +538,8 @@ pub enum CriterionType {
     NeverDisplayVisuallyBad,
     #[serde(rename = "vaf_never_display_visually_good")]
     NeverDisplayVisuallyGood,
+    #[serde(rename = "vaf_personalization")]
+    Personalization,
     #[serde(rename = "vaf_phase1_2_step_verification")]
     Phase12StepVerification,
     #[serde(rename = "vaf_phase1_2nd_screen_experience")]
@@ -512,6 +566,8 @@ pub enum CriterionType {
     Phase1AnnotatingContent,
     #[serde(rename = "vaf_phase1_auto_investing")]
     Phase1AutoInvesting,
+    #[serde(rename = "vaf_phase1_auto_play")]
+    Phase1AutoPlay,
     #[serde(rename = "vaf_phase1_autocorrect_feature")]
     Phase1AutocorrectFeature,
     #[serde(rename = "vaf_phase1_available_social_networks")]
@@ -558,6 +614,10 @@ pub enum CriterionType {
     Phase1CreatingGifs,
     #[serde(rename = "vaf_phase1_creating_routes")]
     Phase1CreatingRoutes,
+    #[serde(rename = "vaf_phase1_creating_watchlists")]
+    Phase1CreatingWatchlists,
+    #[serde(rename = "vaf_phase1_critics__reviews")]
+    Phase1CriticsReviews,
     #[serde(rename = "vaf_phase1_cropping_photos")]
     Phase1CroppingPhotos,
     #[serde(rename = "vaf_phase1_custom_controls")]
@@ -598,6 +658,8 @@ pub enum CriterionType {
     Phase1FitnessDevices,
     #[serde(rename = "vaf_phase1_free_communication")]
     Phase1FreeCommunication,
+    #[serde(rename = "vaf_phase1_free_content")]
+    Phase1FreeContent,
     #[serde(rename = "vaf_phase1_free_movies_shows")]
     Phase1FreeMoviesShows,
     #[serde(rename = "vaf_phase1_free_storage")]
@@ -614,6 +676,8 @@ pub enum CriterionType {
     Phase1GpsTracking,
     #[serde(rename = "vaf_phase1_guide_exercise")]
     Phase1GuideExercise,
+    #[serde(rename = "vaf_phase1_hd_content")]
+    Phase1HdContent,
     #[serde(rename = "vaf_phase1_hd_movies_shows")]
     Phase1HdMoviesShows,
     #[serde(rename = "vaf_phase1_highlighting_text")]
@@ -642,6 +706,8 @@ pub enum CriterionType {
     Phase1LifeInsurance,
     #[serde(rename = "vaf_phase1_listening_offline")]
     Phase1ListeningOffline,
+    #[serde(rename = "vaf_phase1_live_channels")]
+    Phase1LiveChannels,
     #[serde(rename = "vaf_phase1_location_tagging")]
     Phase1LocationTagging,
     #[serde(rename = "vaf_phase1_lockscreen_display")]
@@ -678,6 +744,10 @@ pub enum CriterionType {
     Phase1MovieShowInfo,
     #[serde(rename = "vaf_phase1_multi_device_sync")]
     Phase1MultiDeviceSync,
+    #[serde(rename = "vaf_phase1_multi_language_support")]
+    Phase1MultiLanguageSupport,
+    #[serde(rename = "vaf_phase1_multiple_languages")]
+    Phase1MultipleLanguages,
     #[serde(rename = "vaf_phase1_night_reading_mode")]
     Phase1NightReadingMode,
     #[serde(rename = "vaf_phase1_nutrition_plans")]
@@ -700,6 +770,8 @@ pub enum CriterionType {
     Phase1Personalization,
     #[serde(rename = "vaf_phase1_photo_contests")]
     Phase1PhotoContests,
+    #[serde(rename = "vaf_phase1_photo_framing")]
+    Phase1PhotoFraming,
     #[serde(rename = "vaf_phase1_planning_dates")]
     Phase1PlanningDates,
     #[serde(rename = "vaf_phase1_playing_movies")]
@@ -714,6 +786,8 @@ pub enum CriterionType {
     Phase1PrivacyControls,
     #[serde(rename = "vaf_phase1_questionnaires")]
     Phase1Questionnaires,
+    #[serde(rename = "vaf_phase1_reading_bios")]
+    Phase1ReadingBios,
     #[serde(rename = "vaf_phase1_reading_offline")]
     Phase1ReadingOffline,
     #[serde(rename = "vaf_phase1_real_time_following")]
@@ -728,6 +802,8 @@ pub enum CriterionType {
     Phase1RepostingPhotos,
     #[serde(rename = "vaf_phase1_resume_watching")]
     Phase1ResumeWatching,
+    #[serde(rename = "vaf_phase1_resuming_viewing")]
+    Phase1ResumingViewing,
     #[serde(rename = "vaf_phase1_reviews_by_critics")]
     Phase1ReviewsByCritics,
     #[serde(rename = "vaf_phase1_ringtones")]
@@ -766,6 +842,8 @@ pub enum CriterionType {
     Phase1SmartScales,
     #[serde(rename = "vaf_phase1_smartwatch_support")]
     Phase1SmartwatchSupport,
+    #[serde(rename = "vaf_phase1_social_features")]
+    Phase1SocialFeatures,
     #[serde(rename = "vaf_phase1_social_news_feed")]
     Phase1SocialNewsFeed,
     #[serde(rename = "vaf_phase1_social_recommendations")]
@@ -828,6 +906,8 @@ pub enum CriterionType {
     Phase1VideoChat,
     #[serde(rename = "vaf_phase1_video_group_messaging")]
     Phase1VideoGroupMessaging,
+    #[serde(rename = "vaf_phase1_virtual_reality")]
+    Phase1VirtualReality,
     #[serde(rename = "vaf_phase1_voice_coach")]
     Phase1VoiceCoach,
     #[serde(rename = "vaf_phase1_voice_controls")]
@@ -856,6 +936,24 @@ pub enum CriterionType {
     Phase1WorksOffline,
     #[serde(rename = "vaf_photo_contests")]
     PhotoContests,
+    #[serde(rename = "vaf_photo_framing")]
+    PhotoFraming,
+    #[serde(rename = "vaf_playing_movies")]
+    PlayingMovies,
+    #[serde(rename = "vaf_printing_photos")]
+    PrintingPhotos,
+    #[serde(rename = "vaf_reading_bios")]
+    ReadingBios,
+    #[serde(rename = "vaf_recommendations")]
+    Recommendations,
+    #[serde(rename = "vaf_rentals")]
+    Rentals,
+    #[serde(rename = "vaf_resume_watching")]
+    ResumeWatching,
+    #[serde(rename = "vaf_resuming_viewing")]
+    ResumingViewing,
+    #[serde(rename = "vaf_reviews_by_critics")]
+    ReviewsByCritics,
     #[serde(rename = "vaf_ringtones")]
     Ringtones,
     #[serde(rename = "vaf_rotating_photos")]
@@ -866,12 +964,18 @@ pub enum CriterionType {
     SharingPhotos,
     #[serde(rename = "vaf_showing_old_memories")]
     ShowingOldMemories,
+    #[serde(rename = "vaf_slideshows")]
+    Slideshows,
+    #[serde(rename = "vaf_social_features")]
+    SocialFeatures,
     #[serde(rename = "vaf_song_lyrics")]
     SongLyrics,
     #[serde(rename = "vaf_sound_recording")]
     SoundRecording,
     #[serde(rename = "vaf_stickers")]
     Stickers,
+    #[serde(rename = "vaf_taking_photos")]
+    TakingPhotos,
     #[serde(rename = "vaf_track_fitness_activities")]
     TrackFitnessActivities,
     #[serde(rename = "vaf_tracking_finances")]
@@ -882,8 +986,19 @@ pub enum CriterionType {
     TrainingPlans,
     #[serde(rename = "vaf_user_community")]
     UserCommunity,
+    #[serde(rename = "vaf_user_reviews")]
+    UserReviews,
+    #[serde(rename = "vaf_virtual_reality")]
+    VirtualReality,
     #[serde(rename = "vaf_wallpapers")]
     Wallpapers,
+    #[serde(rename = "vaf_watching_offline")]
+    WatchingOffline,
+    #[serde(rename = "vaf_watching_trailers")]
+    WatchingTrailers,
+    #[cfg(not(feature = "strict"))]
+    #[serde(untagged)]
+    Other(String),
 }
 
 impl std::str::FromStr for CriterionType {
@@ -924,7 +1039,12 @@ mod tests {
     fn all_variants() -> Vec<CriterionType> {
         use CriterionType::*;
         let mut variants = vec![
+            SecondScreenExperience,
+            FourKContent,
+            FourKMoviesShows,
+            ActorBios,
             AgeTargeting68,
+            AndroidTv,
             AppsAttributeAnimeV1,
             AppsAttributeAnimeV2,
             AppsAttributeDownloadForOfflineViewingV1,
@@ -939,19 +1059,30 @@ mod tests {
             AppsCategoryFoodAndDrinkV2,
             AppsCategoryRestaurantV1,
             AppsCategoryRestaurantV2,
+            AutoPlay,
             AvailableSocialNetworks,
             BackingUpPhotos,
+            BlurFeature,
+            BuyingMoviesShows,
             BuyingTickets,
             Camera,
             CancellationPolicy,
             ChangingReservations,
+            ClosedCaptions,
+            CreatingAlbums,
+            CreatingGifs,
             CroppingPhotos,
             DeleteMessages,
             Dictionary,
+            EditingPhotos,
             EditingText,
             Emojis,
             Equalizer,
+            Filmographies,
+            Filters,
+            FreeContent,
             FreeStorage,
+            FreeTrial,
             GamesAddictive,
             GamesBeautiful,
             GamesChallenging,
@@ -1057,9 +1188,9 @@ mod tests {
             GamesGenreTable,
             GamesGenreTacticalRpg,
             GamesGenreTacticalShooter,
-            GamesGenreTileMatching,
             GamesGenreThirdPersonActionAdventure,
             GamesGenreThirdPersonShooter,
+            GamesGenreTileMatching,
             GamesGenreTradingCard,
             GamesGenreTrivia,
             GamesGenreTurnBasedRpgV1,
@@ -1141,12 +1272,21 @@ mod tests {
             GamesSubjectVehicleSimulation,
             GamesSubjectZombie,
             GamesWorksOffline,
+            GoogleCast,
+            HdContent,
+            HdMoviesShows,
             InternationalTransfers,
             Investing,
             LearningPiano,
             MakingCollages,
+            MakingScrapbooks,
+            MakingVideos,
+            MakingWatchlists,
             MapSearches,
             MarkMessageAsRead,
+            MovieShowInfo,
+            MultiDeviceSync,
+            MultipleLanguages,
             NeverDisplayAdsExperience,
             NeverDisplayAppDescription,
             NeverDisplayConsiderateOfTime,
@@ -1166,6 +1306,7 @@ mod tests {
             NeverDisplayUsefulNotifications,
             NeverDisplayVisuallyBad,
             NeverDisplayVisuallyGood,
+            Personalization,
             Phase12StepVerification,
             Phase12ndScreenExperience,
             Phase13rdPartyMusic,
@@ -1179,6 +1320,7 @@ mod tests {
             Phase1AndroidWearSupport,
             Phase1AnnotatingContent,
             Phase1AutoInvesting,
+            Phase1AutoPlay,
             Phase1AutocorrectFeature,
             Phase1AvailableSocialNetworks,
             Phase1BackingUpPhotos,
@@ -1202,6 +1344,8 @@ mod tests {
             Phase1CreatingAlbums,
             Phase1CreatingGifs,
             Phase1CreatingRoutes,
+            Phase1CreatingWatchlists,
+            Phase1CriticsReviews,
             Phase1CroppingPhotos,
             Phase1CustomControls,
             Phase1DeviceMirroring,
@@ -1222,6 +1366,7 @@ mod tests {
             Phase1FitnessAppIntegration,
             Phase1FitnessDevices,
             Phase1FreeCommunication,
+            Phase1FreeContent,
             Phase1FreeMoviesShows,
             Phase1FreeStorage,
             Phase1FreeTrial,
@@ -1230,6 +1375,7 @@ mod tests {
             Phase1GoogleCast,
             Phase1GpsTracking,
             Phase1GuideExercise,
+            Phase1HdContent,
             Phase1HdMoviesShows,
             Phase1HighlightingText,
             Phase1HomescreenWidgets,
@@ -1244,6 +1390,7 @@ mod tests {
             Phase1LendingBooksToFriends,
             Phase1LifeInsurance,
             Phase1ListeningOffline,
+            Phase1LiveChannels,
             Phase1LocationTagging,
             Phase1LockscreenDisplay,
             Phase1LoyaltyProgram,
@@ -1262,6 +1409,8 @@ mod tests {
             Phase1MonitoringCredit,
             Phase1MovieShowInfo,
             Phase1MultiDeviceSync,
+            Phase1MultiLanguageSupport,
+            Phase1MultipleLanguages,
             Phase1NightReadingMode,
             Phase1NutritionPlans,
             Phase1OfflineLogging,
@@ -1273,6 +1422,7 @@ mod tests {
             Phase1PersonalLoans,
             Phase1Personalization,
             Phase1PhotoContests,
+            Phase1PhotoFraming,
             Phase1PlanningDates,
             Phase1PlayingMovies,
             Phase1Podcasts,
@@ -1280,6 +1430,7 @@ mod tests {
             Phase1PrintingPhotos,
             Phase1PrivacyControls,
             Phase1Questionnaires,
+            Phase1ReadingBios,
             Phase1ReadingOffline,
             Phase1RealTimeFollowing,
             Phase1Recommendations,
@@ -1287,6 +1438,7 @@ mod tests {
             Phase1RentingMoviesShows,
             Phase1RepostingPhotos,
             Phase1ResumeWatching,
+            Phase1ResumingViewing,
             Phase1ReviewsByCritics,
             Phase1Ringtones,
             Phase1RotatingPhotos,
@@ -1306,6 +1458,7 @@ mod tests {
             Phase1Slideshows,
             Phase1SmartScales,
             Phase1SmartwatchSupport,
+            Phase1SocialFeatures,
             Phase1SocialNewsFeed,
             Phase1SocialRecommendations,
             Phase1SocialSignIn,
@@ -1337,6 +1490,7 @@ mod tests {
             Phase1VerbalFeedback,
             Phase1VideoChat,
             Phase1VideoGroupMessaging,
+            Phase1VirtualReality,
             Phase1VoiceCoach,
             Phase1VoiceControls,
             Phase1VoiceMessaging,
@@ -1351,20 +1505,36 @@ mod tests {
             Phase1WorkoutDiary,
             Phase1WorksOffline,
             PhotoContests,
+            PhotoFraming,
+            PlayingMovies,
+            PrintingPhotos,
+            ReadingBios,
+            Recommendations,
+            Rentals,
+            ResumeWatching,
+            ResumingViewing,
+            ReviewsByCritics,
             Ringtones,
             RotatingPhotos,
             SeeingPhotosOfPlaces,
             SharingPhotos,
             ShowingOldMemories,
+            Slideshows,
+            SocialFeatures,
             SongLyrics,
             SoundRecording,
             Stickers,
+            TakingPhotos,
             TrackFitnessActivities,
             TrackingFinances,
             TrackingWorkouts,
             TrainingPlans,
             UserCommunity,
+            UserReviews,
+            VirtualReality,
             Wallpapers,
+            WatchingOffline,
+            WatchingTrailers,
         ];
 
         variants.sort();

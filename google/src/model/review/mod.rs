@@ -222,9 +222,11 @@ mod internal {
     }
 
     impl Criterion {
-        const fn criterion_type(&self) -> crate::model::review::criterion::CriterionType {
+        fn criterion_type(&self) -> crate::model::review::criterion::CriterionType {
             match self {
-                Self::Two(criterion_type, ..) | Self::Three(criterion_type, ..) => *criterion_type,
+                Self::Two(criterion_type, ..) | Self::Three(criterion_type, ..) => {
+                    criterion_type.clone()
+                }
             }
         }
 

@@ -33,3 +33,7 @@ thiserror = { workspace = true }
 tokio = { workspace = true }
 urlencoding = { workspace = true }
 uuid = { workspace = true }
+
+[features]
+default = []
+strict = []
