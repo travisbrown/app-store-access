@@ -117,8 +117,8 @@ pub(super) struct App {
     pub developer_data: DeveloperData,
     #[query(".data.[1].[2].[57]")]
     pub purchase_section: Option<purchase_section::PurchaseSection>,
-    #[query(".data.[1].[2].[140]")]
-    version_section: Option<version_section::VersionSection>,
+    //#[query(".data.[1].[2].[140]")]
+    //version_section: Option<version_section::VersionSection>,
     #[query(".data.[1].[2].[95].[0].[3].[2]")]
     pub icon: String,
     #[query(".data.[1].[2].[96].[0].[3].[2]")]
