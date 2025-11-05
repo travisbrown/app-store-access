@@ -3,6 +3,7 @@ use app_store_access_apple::{archive::Data, model::lookup::LookupResult, request
 use cli_helpers::prelude::*;
 use std::io::Write;
 use std::path::PathBuf;
+use std::time::Duration;
 
 const LOOKUP_PAGE_SIZE: usize = 50;
 
@@ -75,6 +76,8 @@ async fn main() -> Result<(), Error> {
                     query,
                     country,
                     lang,
+                    full,
+                    delay,
                 } => {
                     let page = client.search(&query, country, lang).await?;
 
@@ -90,24 +93,61 @@ async fn main() -> Result<(), Error> {
                         })
                         .unwrap_or_default();
 
-                    log::info!("Downloading {} search results", ids.len());
+                    if full {
+                        log::info!("Downloading full information for {} apps", ids.len());
 
-                    for id_chunk in ids.chunks(LOOKUP_PAGE_SIZE) {
-                        let result = client.lookup_ids(id_chunk, country, lang).await?;
+                        for id in ids {
+                            match client.app(id, country).await? {
+                                Some(page) => {
+                                    let app = page
+                                        .store_platform_data
+                                        .product_dv
+                                        .results
+                                        .get(&id)
+                                        .unwrap();
 
-                        for result in result.results {
-                            match &result {
-                                LookupResult::Software(software) => {
                                     writer.write_record([
-                                        software.track_id.to_string(),
-                                        software.bundle_id.to_string(),
-                                        software.artist_id.to_string(),
-                                        software.track_name.to_string(),
-                                        software.artist_name.to_string(),
+                                        id.to_string(),
+                                        app.common
+                                            .bundle_id
+                                            .as_ref()
+                                            .map(|id| id.to_string())
+                                            .unwrap_or_default(),
+                                        app.common.name.to_string(),
                                     ])?;
+
+                                    writer.flush()?;
                                 }
-                                LookupResult::Artist(artist) => {
-                                    log::info!("Unexpected artist result: {}", artist.artist_id,);
+                                None => {
+                                    log::warn!("App not found: {}", id);
+                                }
+                            }
+
+                            tokio::time::sleep(Duration::from_millis(delay)).await;
+                        }
+                    } else {
+                        log::info!("Downloading {} search results", ids.len());
+
+                        for id_chunk in ids.chunks(LOOKUP_PAGE_SIZE) {
+                            let result = client.lookup_ids(id_chunk, country, lang).await?;
+
+                            for result in result.results {
+                                match &result {
+                                    LookupResult::Software(software) => {
+                                        writer.write_record([
+                                            software.track_id.to_string(),
+                                            software.bundle_id.to_string(),
+                                            software.artist_id.to_string(),
+                                            software.track_name.to_string(),
+                                            software.artist_name.to_string(),
+                                        ])?;
+                                    }
+                                    LookupResult::Artist(artist) => {
+                                        log::info!(
+                                            "Unexpected artist result: {}",
+                                            artist.artist_id,
+                                        );
+                                    }
                                 }
                             }
                         }
@@ -386,6 +426,12 @@ enum ApiCommand {
         country: Country,
         #[clap(long, default_value = "en")]
         lang: Language,
+        /// Download full app information for results
+        #[clap(long)]
+        full: bool,
+        /// Time to wait between image requests in milliseconds
+        #[clap(long, default_value = "500")]
+        delay: u64,
     },
     /// Look up apps or developers by ID (option can be provided multiple times)
     LookupIds {

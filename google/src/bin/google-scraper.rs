@@ -8,6 +8,7 @@ use app_store_access_google::{
 };
 use cli_helpers::prelude::*;
 use std::path::PathBuf;
+use std::time::Duration;
 
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
@@ -78,12 +79,16 @@ async fn main() -> Result<(), Error> {
                         }
                     }
                 }
-                ApiCommand::Search { query } => {
-                    let result = client
+                ApiCommand::Search { query, full, delay } => {
+                    let results = client
                         .search(&query, lang, country, PriceFilter::Paid, 100)
                         .await?;
 
-                    for app in result {
+                    if full {
+                        ::log::info!("Downloading full information for {} apps", results.len());
+                    }
+
+                    for app in results {
                         writer.write_record([
                             app.id.clone(),
                             app.developer_id()
@@ -92,6 +97,12 @@ async fn main() -> Result<(), Error> {
                             app.title,
                             app.developer.name,
                         ])?;
+
+                        if full {
+                            client.app(&app.id, lang, country).await?;
+                            writer.flush()?;
+                            tokio::time::sleep(Duration::from_millis(delay)).await;
+                        }
                     }
                 }
                 ApiCommand::Developer { id } => {
@@ -286,6 +297,12 @@ enum ApiCommand {
     Search {
         #[clap(long)]
         query: String,
+        /// Download full app information for results
+        #[clap(long)]
+        full: bool,
+        /// Time to wait between image requests in milliseconds
+        #[clap(long, default_value = "500")]
+        delay: u64,
     },
     /// Request a list of apps for a developer by ID (may be an integer or a string)
     Developer {
