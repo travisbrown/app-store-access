@@ -3,7 +3,7 @@ use app_store_access_google::{
     archive::Data,
     request::{
         RequestData,
-        params::{developer::DeveloperId, review::SortOrder, search::PriceFilter},
+        params::{developer::DeveloperId, review::SortOrder},
     },
 };
 use cli_helpers::prelude::*;
@@ -79,9 +79,18 @@ async fn main() -> Result<(), Error> {
                         }
                     }
                 }
-                ApiCommand::Search { query, full, delay } => {
+                ApiCommand::Search {
+                    query,
+                    price,
+                    full,
+                    delay,
+                } => {
+                    let price_filter = price
+                        .map(|price_filter| price_filter.into())
+                        .unwrap_or_default();
+
                     let results = client
-                        .search(&query, lang, country, PriceFilter::Paid, 100)
+                        .search(&query, lang, country, price_filter, 100)
                         .await?;
 
                     if full {
@@ -297,6 +306,8 @@ enum ApiCommand {
     Search {
         #[clap(long)]
         query: String,
+        #[clap(long)]
+        price: Option<PriceFilter>,
         /// Download full app information for results
         #[clap(long)]
         full: bool,
@@ -327,4 +338,20 @@ enum StoreCommand {
     Search,
     #[cfg(not(feature = "strict"))]
     FixStrict,
+}
+
+#[derive(Clone, Copy, Debug, clap::ValueEnum, serde::Deserialize)]
+#[serde(rename_all = "lowercase")]
+enum PriceFilter {
+    Paid,
+    Free,
+}
+
+impl From<PriceFilter> for app_store_access_google::request::params::search::PriceFilter {
+    fn from(value: PriceFilter) -> Self {
+        match value {
+            PriceFilter::Paid => Self::Paid,
+            PriceFilter::Free => Self::Free,
+        }
+    }
 }
