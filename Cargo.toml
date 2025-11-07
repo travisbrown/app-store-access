@@ -26,7 +26,6 @@ num-traits = "0.2"
 plist = "1"
 regex = "1"
 reqwest = { version = "0.12", features = ["cookies", "json"] }
-rusqlite = "0.37"
 scraper = "0.24"
 scraper-trail = { git = "https://github.com/travisbrown/scraper-trail.git", branch = "v0.1.x" }
 serde = { version = "1", features = ["derive"] }
