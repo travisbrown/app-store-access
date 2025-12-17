@@ -300,6 +300,7 @@ pub enum ComponentName {
 #[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
 #[serde(deny_unknown_fields)]
 pub enum SellerLabel {
+    #[serde(alias = "Anbieter")]
     Seller,
 }
 

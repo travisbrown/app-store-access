@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["core", "google", "apple"]
+members = ["core", "google", "apple", "access"]
 
 [workspace.package]
 authors = ["Travis Brown <travisrobertbrown@gmail.com>"]

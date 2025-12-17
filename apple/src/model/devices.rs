@@ -41,15 +41,16 @@ impl<V: ToBoundedStatic> ToBoundedStatic for DeviceMap<V> {
         DeviceMap(
             self.0
                 .iter()
-                .map(|(key, value)| (*key, value.to_static()))
+                .map(|(key, value)| (key.clone(), value.to_static()))
                 .collect(),
         )
     }
 }
 
 #[derive(
-    Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd, serde::Deserialize, serde::Serialize,
+    Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd, serde::Deserialize, serde::Serialize,
 )]
+#[cfg_attr(feature = "strict", derive(Copy))]
 #[serde(deny_unknown_fields)]
 pub enum DeviceName {
     #[serde(rename = "appleTV")]
@@ -94,9 +95,13 @@ pub enum DeviceName {
     IphoneD74,
     #[serde(rename = "mac")]
     Mac,
+    #[cfg(not(feature = "strict"))]
+    #[serde(untagged)]
+    Other(String),
 }
 
-#[derive(Debug, Clone, Copy, Eq, Hash, PartialEq, serde::Deserialize, serde::Serialize)]
+#[derive(Debug, Clone, Eq, Hash, PartialEq, serde::Deserialize, serde::Serialize)]
+#[cfg_attr(feature = "strict", derive(Copy))]
 pub enum Device {
     #[serde(rename = "AppleTV4-AppleTV4")]
     AppleTv4AppleTv4,
@@ -436,4 +441,15 @@ pub enum Device {
     IPhoneFirstGenIPhone,
     #[serde(rename = "iPodTouchFirstGen-iPod-touch")]
     IPodTouchFirstGenIPodTouch,
+    #[serde(rename = "iPadPro11M5-iPadPro11M5")]
+    IPadPro11M5IPadPro11M5,
+    #[serde(rename = "iPadPro13M5-iPadPro13M5")]
+    IPadPro13M5IPadPro13M5,
+    #[serde(rename = "iPadPro11M5Cellular-iPadPro11M5Cellular")]
+    IPadPro11M5CellularIPadPro11M5Cellular,
+    #[serde(rename = "iPadPro13M5Cellular-iPadPro13M5Cellular")]
+    IPadPro13M5CellularIPadPro13M5Cellular,
+    #[cfg(not(feature = "strict"))]
+    #[serde(untagged)]
+    Other(String),
 }

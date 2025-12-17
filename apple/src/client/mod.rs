@@ -5,7 +5,7 @@ use scraper_trail::client::{json_send, text_send};
 use scraper_trail::request::params::Params;
 use serde_json::Value;
 use std::borrow::Cow;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 pub mod suggest;
 
@@ -49,10 +49,10 @@ pub struct Client {
 
 impl Client {
     #[must_use]
-    pub fn new(output: Option<PathBuf>) -> Self {
+    pub fn new<P: AsRef<Path>>(output: Option<P>) -> Self {
         Self {
             underlying: reqwest::Client::default(),
-            output,
+            output: output.map(|output| output.as_ref().to_path_buf()),
         }
     }
 
