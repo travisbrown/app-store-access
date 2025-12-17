@@ -2,6 +2,7 @@ use app_store_access::{client::SuggestionClient, country::Country, language::Lan
 use app_store_access_apple::model::lookup::LookupResult;
 use app_store_access_google::request::params::search::PriceFilter;
 use cli_helpers::prelude::*;
+use std::io::{BufRead, BufReader};
 use std::path::PathBuf;
 use std::time::Duration;
 
@@ -57,112 +58,60 @@ async fn main() -> Result<(), Error> {
                     full,
                     delay,
                 } => {
-                    let page = apple_client.search(&query, country, lang).await?;
+                    apple_search(
+                        &apple_client,
+                        &mut writer,
+                        country,
+                        lang,
+                        full,
+                        delay,
+                        &query,
+                    )
+                    .await?;
 
-                    let ids = page
-                        .bubbles
-                        .bubbles()
-                        .map(|bubbles| {
-                            bubbles
-                                .results
-                                .iter()
-                                .map(|result| result.id)
-                                .collect::<Vec<_>>()
-                        })
-                        .unwrap_or_default();
+                    google_search(
+                        &google_client,
+                        &mut writer,
+                        country,
+                        lang,
+                        full,
+                        delay,
+                        &query,
+                    )
+                    .await?;
+                }
+                ApiCommand::SearchAll {
+                    query_file,
+                    country,
+                    lang,
+                    full,
+                    delay,
+                } => {
+                    let reader = BufReader::new(std::fs::File::open(query_file)?);
+                    let query_lines = reader.lines().collect::<Result<Vec<_>, _>>()?;
 
-                    if full {
-                        log::info!("Downloading full information for {} Apple apps", ids.len());
-
-                        for id in ids {
-                            match apple_client.app(id, country).await? {
-                                Some(page) => {
-                                    let app = page
-                                        .store_platform_data
-                                        .product_dv
-                                        .results
-                                        .get(&id)
-                                        .unwrap();
-
-                                    writer.write_record([
-                                        "apple".to_string(),
-                                        id.to_string(),
-                                        app.common
-                                            .bundle_id
-                                            .as_ref()
-                                            .map(|id| id.to_string())
-                                            .unwrap_or_default(),
-                                        app.artist_id.to_string(),
-                                        app.common.name.to_string(),
-                                        app.common.artist_name.to_string(),
-                                    ])?;
-
-                                    writer.flush()?;
-                                }
-                                None => {
-                                    log::warn!("App not found: {}", id);
-                                }
-                            }
-
-                            tokio::time::sleep(Duration::from_millis(delay)).await;
-                        }
-                    } else {
-                        log::info!("Downloading {} Apple search results", ids.len());
-
-                        for id_chunk in ids.chunks(LOOKUP_PAGE_SIZE) {
-                            let result = apple_client.lookup_ids(id_chunk, country, lang).await?;
-
-                            for result in result.results {
-                                match &result {
-                                    LookupResult::Software(software) => {
-                                        writer.write_record([
-                                            "apple".to_string(),
-                                            software.track_id.to_string(),
-                                            software.bundle_id.to_string(),
-                                            software.artist_id.to_string(),
-                                            software.track_name.to_string(),
-                                            software.artist_name.to_string(),
-                                        ])?;
-                                    }
-                                    LookupResult::Artist(artist) => {
-                                        log::info!(
-                                            "Unexpected artist result: {}",
-                                            artist.artist_id,
-                                        );
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    let results = google_client
-                        .search(&query, lang, country, PriceFilter::default(), 100)
+                    for query in query_lines {
+                        apple_search(
+                            &apple_client,
+                            &mut writer,
+                            country,
+                            lang,
+                            full,
+                            delay,
+                            &query,
+                        )
                         .await?;
 
-                    if full {
-                        log::info!(
-                            "Downloading full information for {} Google apps",
-                            results.len()
-                        );
-                    }
-
-                    for app in results {
-                        writer.write_record([
-                            "google".to_string(),
-                            "".to_string(),
-                            app.id.clone(),
-                            app.developer_id()
-                                .map(|developer_id| developer_id.to_string())
-                                .unwrap_or_default(),
-                            app.title,
-                            app.developer.name,
-                        ])?;
-
-                        if full {
-                            google_client.app(&app.id, lang, country).await?;
-                            writer.flush()?;
-                            tokio::time::sleep(Duration::from_millis(delay)).await;
-                        }
+                        google_search(
+                            &google_client,
+                            &mut writer,
+                            country,
+                            lang,
+                            full,
+                            delay,
+                            &query,
+                        )
+                        .await?;
                     }
                 }
                 ApiCommand::Suggest {
@@ -244,6 +193,21 @@ enum ApiCommand {
         #[clap(long, default_value = "500")]
         delay: u64,
     },
+    /// Perform searches for a list of queries provided as lines in the indicated text file
+    SearchAll {
+        #[clap(long)]
+        query_file: PathBuf,
+        #[clap(long, default_value = "us")]
+        country: Country,
+        #[clap(long, default_value = "en")]
+        lang: Language,
+        /// Download full app information for results
+        #[clap(long)]
+        full: bool,
+        /// Time to wait between image requests in milliseconds
+        #[clap(long, default_value = "500")]
+        delay: u64,
+    },
     /// Look up autocomplete suggestions for a given query string
     Suggest {
         #[clap(long)]
@@ -253,4 +217,136 @@ enum ApiCommand {
         #[clap(long, default_value = "en")]
         lang: Language,
     },
+}
+
+async fn apple_search<W: std::io::Write>(
+    client: &app_store_access_apple::client::Client,
+    writer: &mut csv::Writer<W>,
+    country: Country,
+    lang: Language,
+    full: bool,
+    delay: u64,
+    query: &str,
+) -> Result<(), Error> {
+    let page = client.search(&query, country, lang).await?;
+
+    let ids = page
+        .bubbles
+        .bubbles()
+        .map(|bubbles| {
+            bubbles
+                .results
+                .iter()
+                .map(|result| result.id)
+                .collect::<Vec<_>>()
+        })
+        .unwrap_or_default();
+
+    if full {
+        log::info!("Downloading full information for {} Apple apps", ids.len());
+
+        for id in ids {
+            match client.app(id, country).await? {
+                Some(page) => {
+                    let app = page
+                        .store_platform_data
+                        .product_dv
+                        .results
+                        .get(&id)
+                        .unwrap();
+
+                    writer.write_record([
+                        "apple".to_string(),
+                        query.to_string(),
+                        id.to_string(),
+                        app.common
+                            .bundle_id
+                            .as_ref()
+                            .map(|id| id.to_string())
+                            .unwrap_or_default(),
+                        app.artist_id.to_string(),
+                        app.common.name.to_string(),
+                        app.common.artist_name.to_string(),
+                    ])?;
+
+                    writer.flush()?;
+                }
+                None => {
+                    log::warn!("App not found: {}", id);
+                }
+            }
+
+            tokio::time::sleep(Duration::from_millis(delay)).await;
+        }
+    } else {
+        log::info!("Downloading {} Apple search results", ids.len());
+
+        for id_chunk in ids.chunks(LOOKUP_PAGE_SIZE) {
+            let result = client.lookup_ids(id_chunk, country, lang).await?;
+
+            for result in result.results {
+                match &result {
+                    LookupResult::Software(software) => {
+                        writer.write_record([
+                            "apple".to_string(),
+                            query.to_string(),
+                            software.track_id.to_string(),
+                            software.bundle_id.to_string(),
+                            software.artist_id.to_string(),
+                            software.track_name.to_string(),
+                            software.artist_name.to_string(),
+                        ])?;
+                    }
+                    LookupResult::Artist(artist) => {
+                        log::info!("Unexpected artist result: {}", artist.artist_id,);
+                    }
+                }
+            }
+        }
+    }
+
+    Ok(())
+}
+
+async fn google_search<W: std::io::Write>(
+    client: &app_store_access_google::client::Client,
+    writer: &mut csv::Writer<W>,
+    country: Country,
+    lang: Language,
+    full: bool,
+    delay: u64,
+    query: &str,
+) -> Result<(), Error> {
+    let results = client
+        .search(&query, lang, country, PriceFilter::default(), 100)
+        .await?;
+
+    if full {
+        log::info!(
+            "Downloading full information for {} Google apps",
+            results.len()
+        );
+    }
+
+    for app in results {
+        writer.write_record([
+            "google".to_string(),
+            query.to_string(),
+            "".to_string(),
+            app.id.clone(),
+            app.developer_id()
+                .map(|developer_id| developer_id.to_string())
+                .unwrap_or_default(),
+            app.title,
+            app.developer.name,
+        ])?;
+
+        if full {
+            client.app(&app.id, lang, country).await?;
+            writer.flush()?;
+            tokio::time::sleep(Duration::from_millis(delay)).await;
+        }
+    }
+
+    Ok(())
 }

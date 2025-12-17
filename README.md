@@ -120,38 +120,38 @@ google,clothes,en,us,clothes app
 google,clothes,en,us,clothes designer app
 ```
 
-Similarly for search:
+Similarly for search, where the term is also included:
 
 ```bash
 $ target/release/app-store-access-cli -vvv api search --query clothing
-apple,518684914,com.garageitaly.garage,929687794,Depop - Buy & Sell Clothes,Depop Ltd
-apple,383915209,com.abercrombie.hollister,339041770,Hollister Co.,Abercrombie & Fitch
-apple,1367363988,com.tapcart.npQt0DXZpj,1363591855,Fashion Nova: Trendy Shopping,Fashion Nova Inc.
-apple,437373394,com.pacsun.pacsun,437373397,Pacsun,Pacific Sunwear
-apple,358821736,com.uo.StoreLocator,358821739,Urban Outfitters,Urban Outfitters
-apple,834465911,com.hm.goe,380487412,H&M,H&M
-apple,547951480,com.inditex.zara.iphone,341323285,ZARA,"Industria de Diseno Textil, S.A."
-apple,342792281,com.gap.shopon,296279554,Old Navy: Shop for New Clothes,Gap Inc.
-apple,1588252721,com.tapcart.Gftde68uJs,1588252723,edikted,Edikted
-apple,326347260,com.gap.gapdenim,296279554,"Gap: Apparel, denim and more",Gap Inc.
+apple,clothing,518684914,com.garageitaly.garage,929687794,Depop - Buy & Sell Clothes,Depop Ltd
+apple,clothing,383915209,com.abercrombie.hollister,339041770,Hollister Co.,Abercrombie & Fitch
+apple,clothing,1367363988,com.tapcart.npQt0DXZpj,1363591855,Fashion Nova: Trendy Shopping,Fashion Nova Inc.
+apple,clothing,437373394,com.pacsun.pacsun,437373397,Pacsun,Pacific Sunwear
+apple,clothing,358821736,com.uo.StoreLocator,358821739,Urban Outfitters,Urban Outfitters
+apple,clothing,834465911,com.hm.goe,380487412,H&M,H&M
+apple,clothing,342792281,com.gap.shopon,296279554,Old Navy: Shop for New Clothes,Gap Inc.
+apple,clothing,547951480,com.inditex.zara.iphone,341323285,ZARA,"Industria de Diseno Textil, S.A."
+apple,clothing,1588252721,com.tapcart.Gftde68uJs,1588252723,edikted,Edikted
+apple,clothing,326347260,com.gap.gapdenim,296279554,"Gap: Apparel, denim and more",Gap Inc.
 ...
-google,,com.louisphilippe.abfrl,ABFRL+E-commerce,Louis Philippe Shopping App,ABFRL E-commerce
-google,,com.house.jjs,JJ's+House,JJ's House:Wedding&Formal Wear,JJ's House
-google,,co.tapcart.app.id_T6ETUv5G9w,Ally+Fashion,Ally Fashion,Ally Fashion
-google,,ua.mad.intertop,INTERTOP+LLC,INTERTOP: Fashion Store,INTERTOP LLC
-google,,com.ua.shop,Under+Armour,Under Armour,Under Armour
-google,,com.levistrauss.customer,Levi's+Mobile+App,Levi's - Shop Denim & More,Levi's Mobile App
-google,,com.cocoplay.black.friday,Coco+Play+By+TabTale,Black Friday Fashion Mall Game,Coco Play By TabTale
-google,,com.belk.android.belk,Belk,Belk – Shopping App,Belk
-google,,com.levi.levis247,Levi's+Mobile+App,Levi's® - Shop Denim & More,Levi's Mobile App
-google,,com.truereligion.app.truereligion,True+Religion+Sales+LLC,True Religion | Since 2002,True Religion Sales LLC
+google,clothing,,com.louisphilippe.abfrl,ABFRL+E-commerce,Louis Philippe Shopping App,ABFRL E-commerce
+google,clothing,,com.house.jjs,JJ's+House,JJ's House:Wedding&Formal Wear,JJ's House
+google,clothing,,co.tapcart.app.id_T6ETUv5G9w,Ally+Fashion,Ally Fashion,Ally Fashion
+google,clothing,,ua.mad.intertop,INTERTOP+LLC,INTERTOP: Fashion Store,INTERTOP LLC
+google,clothing,,com.ua.shop,Under+Armour,Under Armour,Under Armour
+google,clothing,,com.levistrauss.customer,Levi's+Mobile+App,Levi's - Shop Denim & More,Levi's Mobile App
+google,clothing,,com.cocoplay.black.friday,Coco+Play+By+TabTale,Black Friday Fashion Mall Game,Coco Play By TabTale
+google,clothing,,com.belk.android.belk,Belk,Belk – Shopping App,Belk
+google,clothing,,com.levi.levis247,Levi's+Mobile+App,Levi's® - Shop Denim & More,Levi's Mobile App
+google,clothing,,com.truereligion.app.truereligion,True+Religion+Sales+LLC,True Religion | Since 2002,True Religion Sales LLC
 ```
 
-Note that for search, the second column will always be empty for Google results, since Google does
-not provide numeric IDs.
+Note that the second search results column will always be empty for Google, since Google does not provide numeric IDs.
 
 This combined version of the search command also provides a `--full` flag that will cause the full
-app information to be downloaded for each search result.
+app information to be downloaded for each search result, and a `search-all` command that takes a `--query-file` parameter
+pointing to a text file where every line will be used as a query string.
 
 ## Command-line reference
 
@@ -245,9 +245,10 @@ Make API requests and save responses
 Usage: app-store-access-cli api [OPTIONS] <COMMAND>
 
 Commands:
-  search   Perform a search for a given query string
-  suggest  Look up autocomplete suggestions for a given query string
-  help     Print this message or the help of the given subcommand(s)
+  search      Perform a search for a given query string
+  search-all  Perform searches for a list of queries provided as lines in the indicated text file
+  suggest     Look up autocomplete suggestions for a given query string
+  help        Print this message or the help of the given subcommand(s)
 
 Options:
       --apple-archive <APPLE_ARCHIVE>    [default: data/apple/]
