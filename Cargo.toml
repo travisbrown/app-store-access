@@ -25,9 +25,9 @@ num-rational = { version = "0.4", features = ["serde"] }
 num-traits = "0.2"
 plist = "1"
 regex = "1"
-reqwest = { version = "0.12", features = ["cookies", "json"] }
+reqwest = { version = "0.13", features = ["cookies", "json"] }
 scraper = "0.24"
-scraper-trail = { git = "https://github.com/travisbrown/scraper-trail.git", branch = "v0.1.x" }
+scraper-trail = { git = "https://github.com/travisbrown/scraper-trail.git" }
 serde = { version = "1", features = ["derive"] }
 serde-query = "0.2"
 serde-field-attributes = "0.1"
