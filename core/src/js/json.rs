@@ -24,7 +24,12 @@ pub enum Error {
 pub fn expr_to_json(expr: &Expr) -> Result<Value, Error> {
     match expr {
         Expr::Lit(lit) => match lit {
-            Lit::Str(str) => Ok(Value::String(str.value.as_str().to_string())),
+            Lit::Str(str) => Ok(Value::String(
+                str.value
+                    .as_str()
+                    .ok_or_else(|| Error::InvalidLiteral(lit.clone()))?
+                    .to_string(),
+            )),
             Lit::Num(num) => Ok(Value::Number(
                 number_to_json_number(num).ok_or_else(|| Error::InvalidNumber(num.clone()))?,
             )),
@@ -78,7 +83,7 @@ pub fn expr_to_json(expr: &Expr) -> Result<Value, Error> {
 fn prop_name_to_str(prop_name: &PropName) -> Option<&str> {
     prop_name
         .as_str()
-        .map(|str| str.value.as_str())
+        .and_then(|str| str.value.as_str())
         .or_else(|| prop_name.as_ident().map(|ident| ident.sym.as_str()))
 }
 

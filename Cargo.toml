@@ -17,7 +17,7 @@ bounded-static-derive-more = "0.1"
 chrono = { version = "0.4", features = ["serde"] }
 cli-helpers = "0.1"
 csv = "1"
-ecmade = "0.2"
+ecmade = "0.3"
 http = "1"
 indexmap = { version = "2", features = ["serde"] }
 log = "0.4"
@@ -26,16 +26,16 @@ num-traits = "0.2"
 plist = "1"
 regex = "1"
 reqwest = { version = "0.13", features = ["cookies", "json"] }
-scraper = "0.24"
-scraper-trail = { git = "https://github.com/travisbrown/scraper-trail.git" }
+scraper = "0.25"
+scraper-trail = "0.1"
 serde = { version = "1", features = ["derive"] }
 serde-query = "0.2"
-serde-field-attributes = "0.1"
+serde-field-attributes = "0.2"
 serde_json = { version = "1", features = ["preserve_order"] }
-swc_atoms = "7"
-swc_common = "15"
-swc_ecma_ast = "16"
-swc_ecma_parser = "25"
+swc_atoms = "9"
+swc_common = "18"
+swc_ecma_ast = "19"
+swc_ecma_parser = "32"
 thiserror = "2"
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 url = "2"
