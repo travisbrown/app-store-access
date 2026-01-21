@@ -17,7 +17,7 @@ bounded-static-derive-more = "0.1"
 chrono = { version = "0.4", features = ["serde"] }
 cli-helpers = "0.1"
 csv = "1"
-ecmade = "0.3"
+ecmade = "0.4"
 http = "1"
 indexmap = { version = "2", features = ["serde"] }
 log = "0.4"
@@ -34,8 +34,8 @@ serde-field-attributes = "0.2"
 serde_json = { version = "1", features = ["preserve_order"] }
 swc_atoms = "9"
 swc_common = "18"
-swc_ecma_ast = "19"
-swc_ecma_parser = "32"
+swc_ecma_ast = "20"
+swc_ecma_parser = "33"
 thiserror = "2"
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 url = "2"
