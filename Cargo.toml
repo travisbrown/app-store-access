@@ -30,12 +30,12 @@ scraper = "0.25"
 scraper-trail = "0.1"
 serde = { version = "1", features = ["derive"] }
 serde-query = "0.2"
-serde-field-attributes = "0.2"
+serde-field-attributes = "0.3"
 serde_json = { version = "1", features = ["preserve_order"] }
 swc_atoms = "9"
 swc_common = "18"
 swc_ecma_ast = "20"
-swc_ecma_parser = "33"
+swc_ecma_parser = "34"
 thiserror = "2"
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 url = "2"
