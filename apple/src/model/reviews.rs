@@ -50,7 +50,7 @@ impl<'de> serde::de::Deserialize<'de> for Page<'_> {
 
 static SELF_URL_RE: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
     regex::Regex::new(
-        r"^https://itunes.apple.com/([a-z]{2})/rss/customerreviews/page=(\d+)/id=(\d+)/sortby=([a-zA-z]+)/json$"
+        r"^https://itunes.apple.com/([a-z]{2})/rss/customerreviews/page=(\d+)/id=(\d+)/sortby=([a-zA-Z]+)/json$"
     )
     .unwrap()
 });

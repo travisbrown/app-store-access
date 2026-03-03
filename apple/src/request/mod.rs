@@ -19,7 +19,7 @@ static REVIEWS_URL_RE: LazyLock<Regex> = LazyLock::new(|| {
 });
 
 static RATINGS_URL_RE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"^https://itunes.apple.com/(\w{2})/customer-reviews/id(\d+)?displayable-kind=11$")
+    Regex::new(r"^https://itunes.apple.com/(\w{2})/customer-reviews/id(\d+)\?displayable-kind=11$")
         .unwrap()
 });
 
