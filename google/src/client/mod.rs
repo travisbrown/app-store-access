@@ -103,8 +103,12 @@ impl Client {
 
         match text_send(&self.underlying, request.build_request(None)).await {
             Ok(exchange) => {
-                let html = scraper::Html::parse_document(&exchange.response.data);
-                let json_3 = crate::parse::parse_ds_value::<Value>(&html, 3)?;
+                // Parse HTML in a local block so that `scraper::Html` (which is not `Send`) is
+                // dropped before the first `.await` in the loop below, keeping the future `Send`.
+                let json_3 = {
+                    let html = scraper::Html::parse_document(&exchange.response.data);
+                    crate::parse::parse_ds_value::<Value>(&html, 3)?
+                };
                 let new_exchange = exchange.map(|_| serde_json::json!(vec![json_3.clone()]));
 
                 if let Some(output) = &self.output {
@@ -171,8 +175,11 @@ impl Client {
         let request = crate::request::Request::search(query, Some(price), language, country);
         let exchange = text_send(&self.underlying, request.build_request(None)).await?;
 
-        let html = scraper::Html::parse_document(&exchange.response.data);
-        let json = crate::parse::parse_ds_value::<Value>(&html, 1)?;
+        // Same scoping trick as in `developer()` to keep the future `Send`.
+        let json = {
+            let html = scraper::Html::parse_document(&exchange.response.data);
+            crate::parse::parse_ds_value::<Value>(&html, 1)?
+        };
 
         let new_exchange = exchange.map(|_| serde_json::json!(vec![json.clone()]));
 
