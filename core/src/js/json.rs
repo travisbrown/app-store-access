@@ -88,11 +88,13 @@ fn prop_name_to_str(prop_name: &PropName) -> Option<&str> {
 }
 
 fn number_to_json_number(num: &Number) -> Option<serde_json::Number> {
-    if let Some(str) = num.raw.as_ref().map(swc_atoms::Atom::as_str)
-        && !str.contains('.')
-    {
-        serde_json::Number::from_i128(num.value as i128)
-    } else {
-        serde_json::Number::from_f64(num.value)
+    match num.raw.as_ref().map(swc_atoms::Atom::as_str) {
+        // If there is a raw representation with no decimal point, parse it as an integer directly
+        // (avoiding the lossy cast from `f64` that would truncate large integers.
+        Some(raw) if !raw.contains('.') => raw
+            .parse::<i128>()
+            .ok()
+            .and_then(serde_json::Number::from_i128),
+        _ => serde_json::Number::from_f64(num.value),
     }
 }
