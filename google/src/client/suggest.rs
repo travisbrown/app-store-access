@@ -28,17 +28,23 @@ impl app_store_access::client::SuggestionClient for super::Client {
     ) -> impl std::future::Future<Output = Result<Vec<String>, Self::Error>> + Send {
         let url = format!("{BASE_URL}{URL}&hl={lang}&gl={country}");
 
+        // Build the body safely: construct the nested JSON programmatically so
+        // that `query` is properly JSON-escaped, then URL-encode the whole value.
         async move {
+            let inner_json = serde_json::json!([[null, [query], [10], [2], 4]]).to_string();
+            let outer_json = serde_json::json!([[["IJ4APc", inner_json]]]).to_string();
+            let body = format!("f.req={}", urlencoding::encode(&outer_json));
+
             let response = self
-            .underlying
-            .post(url)
-            .header(
-                reqwest::header::CONTENT_TYPE,
-                "application/x-www-form-urlencoded;charset=UTF-8",
-            )
-            .body(format!("f.req=%5B%5B%5B%22IJ4APc%22%2C%22%5B%5Bnull%2C%5B%5C%22${query}%5C%22%5D%2C%5B10%5D%2C%5B2%5D%2C4%5D%5D%22%5D%5D%5D"))
-            .send()
-            .await?;
+                .underlying
+                .post(url)
+                .header(
+                    reqwest::header::CONTENT_TYPE,
+                    "application/x-www-form-urlencoded;charset=UTF-8",
+                )
+                .body(body)
+                .send()
+                .await?;
 
             let body = response.text().await?;
 
