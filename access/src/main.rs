@@ -20,7 +20,7 @@ pub enum Error {
     AppleSuggestClient(#[from] app_store_access_apple::client::suggest::Error),
     #[error("Google client error")]
     GoogleClient(#[from] app_store_access_google::client::Error),
-    #[error("Apple client suggestion error")]
+    #[error("Google client suggestion error")]
     GoogleSuggestClient(#[from] app_store_access_google::client::suggest::Error),
     #[error("CSV error")]
     Csv(#[from] csv::Error),

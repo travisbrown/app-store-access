@@ -322,18 +322,13 @@ pub const KNOWN_LANGUAGES: [(Language, &str); 122] = [
 
 impl Language {
     pub fn as_str(&self) -> &str {
-        static AS_STR: LazyLock<HashMap<Language, &'static str>> = LazyLock::new(|| {
-            KNOWN_LANGUAGES
-                .map(|(language, code)| (language, code))
-                .iter()
-                .copied()
-                .collect()
-        });
+        static AS_STR: LazyLock<HashMap<Language, &'static str>> =
+            LazyLock::new(|| KNOWN_LANGUAGES.iter().copied().collect());
 
         match self {
             // Safe because we control the `Other` constructor.
             Self::Other(Other(chars)) => std::str::from_utf8(chars).unwrap(),
-            // Safe because we country the `KNOWN_LANGS` definition.
+            // Safe because we control the `KNOWN_LANGUAGES` definition.
             other => AS_STR.get(other).expect("Fix KNOWN_LANGUAGES definition"),
         }
     }
@@ -513,7 +508,7 @@ pub mod regional_language_code_lowercase {
 #[cfg(test)]
 mod tests {
     #[test]
-    fn known_countries_order() {
+    fn known_languages_order() {
         let langs = super::KNOWN_LANGUAGES
             .iter()
             .map(|(language, _)| *language)
@@ -526,7 +521,7 @@ mod tests {
     }
 
     #[test]
-    fn round_trip_countries_order() {
+    fn round_trip_languages_order() {
         let langs = super::KNOWN_LANGUAGES
             .iter()
             .map(|(language, _)| *language)

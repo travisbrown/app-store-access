@@ -97,18 +97,13 @@ const KNOWN_COUNTRIES: [(Country, &str); 40] = [
 
 impl Country {
     pub fn as_str(&self) -> &str {
-        static AS_STR: LazyLock<HashMap<Country, &'static str>> = LazyLock::new(|| {
-            KNOWN_COUNTRIES
-                .map(|(country, code)| (country, code))
-                .iter()
-                .copied()
-                .collect()
-        });
+        static AS_STR: LazyLock<HashMap<Country, &'static str>> =
+            LazyLock::new(|| KNOWN_COUNTRIES.iter().copied().collect());
 
         match self {
             // Safe because we control the `Other` constructor.
             Self::Other(Other(chars)) => std::str::from_utf8(chars).unwrap(),
-            // Safe because we country the `KNOWN_COUNTRIES` definition.
+            // Safe because we control the `KNOWN_COUNTRIES` definition.
             other => AS_STR.get(other).expect("Fix KNOWN_COUNTRIES definition"),
         }
     }
