@@ -247,10 +247,8 @@ impl Client {
 
         let page: crate::model::review::PageResponse = serde_json::from_value(pagination_json)?;
 
-        let mut reviews = vec![];
+        let mut reviews = page.reviews;
         let mut token = page.token;
-
-        reviews.extend(page.reviews);
 
         while let Some(ref token_value) = token {
             log::info!("Making review pagination request via token: {token_value}");

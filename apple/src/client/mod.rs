@@ -152,8 +152,7 @@ impl Client {
 
         let last_page = first.last_page;
 
-        let mut pages = vec![];
-        pages.push(first);
+        let mut pages = vec![first];
 
         if let Some(last_page) = last_page {
             for next in 2..=last_page {
