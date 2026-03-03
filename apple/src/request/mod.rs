@@ -353,8 +353,8 @@ impl<'a> Params for Request<'a> {
             })
             .map_or(Ok(None), |value| value.map(Some))?;
 
-        let country: Option<Country> =
-            apple_store_front_header.map(|header| markets::MarketCode(header.store_id).into());
+        let country: Option<Country> = apple_store_front_header
+            .and_then(|header| markets::MarketCode(header.store_id).try_into().ok());
 
         let accept_language_header = request
             .headers
