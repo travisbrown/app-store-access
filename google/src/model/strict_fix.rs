@@ -6,14 +6,15 @@ pub enum Fix<'a> {
     UnknownReviewCriterionType(Cow<'a, str>),
 }
 
-pub fn review_page_fixes<'a>(page: &'a super::review::Page) -> Vec<Fix<'a>> {
+#[must_use]
+pub fn review_page_fixes(page: &super::review::Page) -> Vec<Fix<'_>> {
     let mut fixes = vec![];
 
     for review in &page.reviews {
         if let Some(criteria) = &review.criteria {
             for (criterion, _) in criteria {
                 if let CriterionType::Other(value) = criterion {
-                    fixes.push(Fix::UnknownReviewCriterionType(value.into()))
+                    fixes.push(Fix::UnknownReviewCriterionType(value.into()));
                 }
             }
         }

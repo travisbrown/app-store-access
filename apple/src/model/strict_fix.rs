@@ -15,6 +15,7 @@ pub enum Fix<'a> {
     },
 }
 
+#[must_use]
 pub fn app_fixes<'a>(app: &'a super::full::Page<'a>) -> Vec<Fix<'a>> {
     let mut fixes = vec![];
 
@@ -29,6 +30,7 @@ pub fn app_fixes<'a>(app: &'a super::full::Page<'a>) -> Vec<Fix<'a>> {
     fixes
 }
 
+#[must_use]
 pub fn lookup_fixes<'a>(list: &'a super::lookup::LookupResultList<'a>) -> Vec<Fix<'a>> {
     let mut fixes = vec![];
 
@@ -45,13 +47,13 @@ pub fn lookup_fixes<'a>(list: &'a super::lookup::LookupResultList<'a>) -> Vec<Fi
                 }
 
                 if let Some(fix) =
-                    genre_fix(software.primary_genre_name.clone(), &software.primary_genre)
+                    genre_fix(software.primary_genre_name.clone(), software.primary_genre)
                 {
                     fixes.push(fix);
                 }
 
                 for (genre, name) in software.genres.iter().zip(software.genres_from_name.iter()) {
-                    if let Some(fix) = genre_fix(name.clone(), genre) {
+                    if let Some(fix) = genre_fix(name.clone(), *genre) {
                         fixes.push(fix);
                     }
                 }
@@ -62,11 +64,11 @@ pub fn lookup_fixes<'a>(list: &'a super::lookup::LookupResultList<'a>) -> Vec<Fi
     fixes
 }
 
-fn genre_fix<'a>(name: Cow<'a, str>, genre: &Genre) -> Option<Fix<'a>> {
+fn genre_fix(name: Cow<'_, str>, genre: Genre) -> Option<Fix<'_>> {
     match name.parse::<Genre>() {
-        Ok(genre) if genre.id() != genre.id() => Some(Fix::InvalidGenreName {
-            name: name.clone(),
-            found_id: genre.id(),
+        Ok(parsed_genre) if parsed_genre.id() != genre.id() => Some(Fix::InvalidGenreName {
+            name,
+            found_id: parsed_genre.id(),
             expected_id: genre.id(),
         }),
         Err(super::genre::Error::InvalidName(name)) => Some(Fix::UnknownGenreName {
