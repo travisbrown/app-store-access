@@ -6,7 +6,8 @@ use scraper_trail::{
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Data {
-    Detail(crate::model::app::App),
+    /// Boxed to reduce enum size (clippy `large_enum_variant`).
+    Detail(Box<crate::model::app::App>),
     DeveloperInitial(crate::model::developer::Page),
     DeveloperPagination(DeveloperId, crate::model::developer::Page),
     Search(crate::model::search::Page),
@@ -40,8 +41,9 @@ impl Archiveable for Data {
             RequestData::Details { .. } => {
                 let next = map.next_entry::<Field, Response<'_, crate::model::full::AppData>>()?;
 
-                Ok(next
-                    .map(|(field, response)| (field, response.map(|data| Self::Detail(data.ds5)))))
+                Ok(next.map(|(field, response)| {
+                    (field, response.map(|data| Self::Detail(Box::new(data.ds5))))
+                }))
             }
             RequestData::Developer { developer_id } => {
                 if developer_id.is_numeric() {

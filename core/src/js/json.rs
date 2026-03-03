@@ -11,12 +11,14 @@ pub enum Error {
     InvalidNumber(Number),
     #[error("Invalid literal")]
     InvalidLiteral(Lit),
+    // Boxed to maintain size.
     #[error("Invalid prop")]
-    InvalidProp(Prop),
+    InvalidProp(Box<Prop>),
     #[error("Unexpected spread")]
     UnexpectedSpread(SpreadElement),
+    // Boxed to maintain size.
     #[error("Unexpected expression")]
-    UnexpectedExpr(Expr),
+    UnexpectedExpr(Box<Expr>),
     #[error("JSON error")]
     Json(#[from] serde_json::Error),
 }
@@ -53,7 +55,7 @@ pub fn expr_to_json(expr: &Expr) -> Result<Value, Error> {
 
                             Ok((key.to_string(), value))
                         }
-                        _ => Err(Error::InvalidProp(*prop.clone())),
+                        _ => Err(Error::InvalidProp(Box::new(*prop.clone()))),
                     },
                     PropOrSpread::Spread(spread) => Err(Error::UnexpectedSpread(spread.clone())),
                 })
@@ -68,7 +70,7 @@ pub fn expr_to_json(expr: &Expr) -> Result<Value, Error> {
                     elem.as_ref()
                         .ok_or_else(|| {
                             // TODO: Figure out what `None` means here.
-                            Error::UnexpectedExpr(expr.clone())
+                            Error::UnexpectedExpr(Box::new(expr.clone()))
                         })
                         .and_then(|elem| expr_to_json(&elem.expr))
                 })
@@ -76,7 +78,7 @@ pub fn expr_to_json(expr: &Expr) -> Result<Value, Error> {
 
             Ok(Value::Array(elems))
         }
-        _ => Err(Error::UnexpectedExpr(expr.clone())),
+        _ => Err(Error::UnexpectedExpr(Box::new(expr.clone()))),
     }
 }
 

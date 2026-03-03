@@ -215,8 +215,9 @@ pub struct Description<'a> {
 #[derive(Clone, Debug, Eq, PartialEq, ToStatic, serde::Deserialize, serde::Serialize)]
 #[serde(deny_unknown_fields, tag = "componentName")]
 pub enum PageData<'a> {
+    // Boxed to maintain size.
     #[serde(rename = "software_page")]
-    SoftwarePage(SoftwarePage<'a>),
+    SoftwarePage(Box<SoftwarePage<'a>>),
     #[serde(rename = "unsupported_product_page")]
     UnsupportedProductPage {
         id: u64,

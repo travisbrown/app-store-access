@@ -18,7 +18,7 @@ impl<'de> serde::de::Deserialize<'de> for AppData {
         for app_ds in app_dss {
             match app_ds {
                 AppDs::Ds5 { data } => {
-                    ds5 = Some(data);
+                    ds5 = Some(*data);
                 }
                 AppDs::Ds3 { data } => {
                     ds3 = Some(data);
@@ -87,7 +87,7 @@ pub(super) enum AppDs {
     #[serde(rename = "ds:5")]
     Ds5 {
         #[serde(flatten)]
-        data: super::app::App,
+        data: Box<super::app::App>,
     },
     #[serde(rename = "ds:3")]
     Ds3 {
